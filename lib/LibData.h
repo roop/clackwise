@@ -40,7 +40,7 @@ struct LibAttribute {
     //   vector<string>*  - like  line (26, 0, 100, 0);
     LibAttribute(string n, any v): name(n), value(v) {};
     ~LibAttribute();
-    void Write(ostream& out);
+    void Write(ostream& out) const;
 };
 void WriteLibAttributeValue(ostream& out, any value);
 
@@ -58,16 +58,16 @@ public:
     };
     ~LibGroup();
     void setGroupName(string g) { groupName_ = g; }
-    string groupName() { return groupName_; }
+    string groupName() const { return groupName_; }
     void setName(string n) { name_ = n; }
-    string name() { return name_; }
+    string name() const { return name_; }
     void setAttribute(string name, any value);
-    any attribute(string name);
+    any attribute (string name) const;
     void addLibGroup(LibGroup *g); // add a sub-group to this libgroup
     void addLibAttribute(LibAttribute *a); // add a sub-group to this libgroup
     void setStatements(vector<any>* statements) { delete statements_; statements_ = statements; };
-    vector<any>* statements() { return statements_; };
-    void Write(ostream& out, string prefix="");
+    vector<any>* statements() const { return statements_; };
+    void Write(ostream& out, string prefix="") const;
 };
 
 #endif

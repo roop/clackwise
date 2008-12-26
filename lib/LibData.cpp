@@ -30,7 +30,7 @@ using namespace std::tr1;
 using namespace boost;
 
 
-void LibAttribute::Write(ostream& out) {
+void LibAttribute::Write(ostream& out) const {
     out << name << " : ";
     WriteLibAttributeValue(out, value);
     out << ";" << endl;
@@ -57,8 +57,8 @@ void LibGroup::setAttribute(string name, any value) {
   }
 };
 
-any LibGroup::attribute(string name) {
-    return any_cast<LibAttribute*>(statements_->at(attributes_[name]))->value;
+any LibGroup::attribute(string name) const {
+    return any_cast<LibAttribute*>(statements_->at(attributes_.find(name)->second))->value;
 };
 
 void LibGroup::addLibGroup(LibGroup *g) {
@@ -70,7 +70,7 @@ void LibGroup::addLibAttribute(LibAttribute *a) {
     attributes_[a->name] = statements_->size() - 1;
 };
 
-void LibGroup::Write(ostream& out, string prefix) {
+void LibGroup::Write(ostream& out, string prefix) const {
     out << prefix << groupName() << "(" << name() << ")" << " {" << endl;
     for ( vector<any>::iterator it = statements_->begin();
           it != statements_->end(); ++it ) {

@@ -21,8 +21,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QFile>
 #include "DotLib.h"
-#include "LibGroup.h"
-#include "liberty.h"
+#include "Liberty/LibGroup.h"
+#include "Liberty/Liberty.h"
 
 DotLib::DotLib(const QString& filename)
 {

@@ -22,8 +22,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QDebug>
 
-#include "LibGroup.h"
-#include "liberty.h"
+#include "Liberty/LibGroup.h"
+#include "Liberty/Liberty.h"
 
 class LibGroup::Private
 {

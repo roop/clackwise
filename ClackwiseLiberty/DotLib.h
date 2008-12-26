@@ -22,7 +22,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __DOTLIB_H
 #define __DOTLIB_H
 
-#include "LibGroup.h"
+#include "Liberty/LibGroup.h"
 
 class DotLib
 	: public LibGroup

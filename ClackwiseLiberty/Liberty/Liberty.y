@@ -25,26 +25,26 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPair>
 #include <QStringList>
 #include <QVariantList>
-#include "LibGroup.h"
+#include "Liberty/LibGroup.h"
 #define YYSTYPE QVariant
 #define YYDEBUG 1
 
-int libertylex();  
-int libertyparse(QVariant& ret);
-extern int libertydebug;
-extern FILE* libertyin;
-extern int libertylineno;
+int Libertylex();  
+int Libertyparse(QVariant& ret);
+extern int Libertydebug;
+extern FILE* Libertyin;
+extern int Libertylineno;
 QString libertyFilename = "";
 static bool parseErrorRecoveryTriggered;
 
 LibGroup* parseLiberty(const QString &filename) {
-    libertydebug = 0;
+    Libertydebug = 0;
 
     libertyFilename = filename;
     parseErrorRecoveryTriggered = false;
 
-    libertyin = fopen(filename.toAscii().data(), "r");
-    if (libertyin == NULL) {
+    Libertyin = fopen(filename.toAscii().data(), "r");
+    if (Libertyin == NULL) {
       qDebug() << "Error: Can't open lib file " << filename << " for reading" << endl;
       return NULL;
     }
@@ -54,10 +54,10 @@ LibGroup* parseLiberty(const QString &filename) {
     //     return any_cast<LibGroup*>(p);
     // else
     //     return NULL;
-	if (libertyparse(result) != 0 || parseErrorRecoveryTriggered) {
+	if (Libertyparse(result) != 0 || parseErrorRecoveryTriggered) {
 		return NULL;
 	}
-    fclose(libertyin);
+    fclose(Libertyin);
 
     libertyFilename = "";
     parseErrorRecoveryTriggered = false;
@@ -65,9 +65,9 @@ LibGroup* parseLiberty(const QString &filename) {
 	return result.value<LibGroup*>();
 }
 
-void libertyerror(QVariant& ret, const char *str) {
+void Libertyerror(QVariant& ret, const char *str) {
     parseErrorRecoveryTriggered = true;
-    qDebug() << QString("Error: %1 at line %2 of library file %3\n").arg(str).arg(libertylineno).arg(libertyFilename);
+    qDebug() << QString("Error: %1 at line %2 of library file %3\n").arg(str).arg(Libertylineno).arg(libertyFilename);
 }
  
   
@@ -134,7 +134,7 @@ libgrouphead :       // of type LibGroup*
 			} else if ($3.toStringList().size() == 1) {
 				$$.setValue<LibGroup*>(new LibGroup($1.toString(), $3.toStringList().at(0)));
 			} else {
-				libertyerror($$, "Expecting one or zero names for lib group, but got more");
+				Libertyerror($$, "Expecting one or zero names for lib group, but got more");
 				YYERROR;
 			}
          }
@@ -213,7 +213,7 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << libertylineno
+					qDebug() << "Error: define or define_group statement incorrect at line " << Libertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
 				}
 			} else {
@@ -228,7 +228,7 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << libertylineno
+					qDebug() << "Error: define or define_group statement incorrect at line " << Libertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
 				}
 			} else {

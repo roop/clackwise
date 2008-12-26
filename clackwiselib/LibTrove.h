@@ -19,52 +19,25 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include <QFile>
+#include <QString>
+#include <QHash>
+
+#ifndef __LIBTROVE_H
+#define __LIBTROVE_H
+
 #include "DotLib.h"
-#include "LibGroup.h"
-#include "liberty.h"
 
-DotLib::DotLib(const QString& filename)
-{
-	if (!filename.isNull()) {
-		read(filename);
-	}
-}
+class LibTrove {
+public:
+	LibTrove(const QString &troveName);
+	~LibTrove();
+	void store(const QString &name, DotLib *dotlib);
+	DotLib* retrieve(const QString &name) const;
+	void remove(const QString &name);
+	void clear();
 
-DotLib::~DotLib()
-{
-}
-
-DotLib::DotLib(const DotLib &other)
-        : LibGroup(other)
-{
-}
-
-DotLib& DotLib::operator=(const DotLib & other)
-{
-	LibGroup::operator=(other);
-}
-
-bool DotLib::read(const QString& filename)
-{
-    LibGroup* lg = parseLiberty(filename);
-    if (lg == NULL) {
-        return false;
-    }
-    *this = * ((DotLib*) lg);
-    delete lg;
-    return true;
-}
-
-bool DotLib::write(const QString& filename)
-{
-	QFile dotlib(filename);
-	if (!dotlib.open(QIODevice::WriteOnly)) {
-		return false;
-	}
-	if (!d) {
-		return false;
-	}
-	dotlib.write(toText().toAscii().data());
-	return true;
-}
+private:
+	QString const m_troveName;
+	QHash<QString, DotLib*> m_data;
+};
+#endif

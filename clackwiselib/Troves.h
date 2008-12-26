@@ -19,16 +19,25 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include "LibGroup.h"
+#ifndef __TROVES_H
+#define __TROVES_H
 
-class DotLib
-	: public LibGroup
-{
+#include "LibTrove.h"
+
+class Troves {
 public:
-	DotLib(const QString& filename=QString());
-	~DotLib();
-	DotLib(const DotLib &other);
-	DotLib& operator=(const DotLib & other);
-	bool read(const QString& filename);
-	bool write(const QString& filename);
+    static Troves* instance();
+    static void destroy();
+    LibTrove* libTrove(const QString &name);
+    void setLibTrove(const QString &name, LibTrove* trove);
+    void removeLibTrove(const QString &name);
+    void clear();
+
+private:
+    static Troves* s_instance;
+    Troves();
+    ~Troves();
+    QHash<QString, LibTrove*> m_libTroves;
+    // QHash<QString, LibTrove*> m_modelTroves; // for future use
 };
+#endif

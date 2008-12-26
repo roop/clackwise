@@ -31,14 +31,14 @@ using namespace boost;
 
 
 void LibAttribute::Write(ostream& out) {
-    out << name;
+    out << name << " : ";
     WriteLibAttributeValue(out, value);
     out << ";" << endl;
 };
 
 LibAttribute::~LibAttribute() {
-    if (value.type() == typeid(vector<any>*)) {
-        delete any_cast<vector<any>*>(value);
+    if (value.type() == typeid(vector<string>*)) {
+        delete any_cast<vector<string>*>(value);
     }
 };
 
@@ -105,22 +105,18 @@ LibGroup::~LibGroup() {
     delete statements_;
 };
 
-void WriteLibAttributeValue(ostream& out, any value, string prefix) {
-    if (value.type() == typeid(int)) {
-        cout << prefix << any_cast<int>(value);
-    } else if (value.type() == typeid(double)) {
-        cout << prefix << any_cast<double>(value);
-    } else if (value.type() == typeid(string)) {
-        cout << prefix << any_cast<string>(value);
-    } else if (value.type() == typeid(vector<any>*)) {
-        cout << " (";
-        vector<any>* vl = any_cast<vector<any>*>(value);
-        for ( vector<any>::iterator it = vl->begin();
-              it != vl->end(); ++it ) {
-            if (it > vl->begin()) cout << ", ";
-            WriteLibAttributeValue(out, *it, "");
+void WriteLibAttributeValue(ostream& out, any value) {
+    if (value.type() == typeid(string)) {
+        out << any_cast<string>(value);
+    } else if (value.type() == typeid(vector<string>*)) {
+        out << " (";
+        vector<string>* l = any_cast<vector<string>*>(value);
+        for ( vector<string>::iterator it = l->begin();
+              it != l->end(); ++it ) {
+            if (it > l->begin()) out << ", ";
+            out << *it;
         }
-        cout << ")";
+        out << ")";
     } else {
         cout << "<unknown_obj>";
     }

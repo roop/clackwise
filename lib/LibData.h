@@ -37,13 +37,12 @@ struct LibAttribute {
     any value;
     // value can be any of: 
     //   string        - like  time_unit : "1ns" ;
-    //   vector<any>*  - like  line (26, 0, 100, 0);
-    //                   (where any can be any of ..., but practically, not a vector again)
+    //   vector<string>*  - like  line (26, 0, 100, 0);
     LibAttribute(string n, any v): name(n), value(v) {};
     ~LibAttribute();
     void Write(ostream& out);
 };
-void WriteLibAttributeValue(ostream& out, any value, string prefix=" : ");
+void WriteLibAttributeValue(ostream& out, any value);
 
 class LibGroup {
 private:

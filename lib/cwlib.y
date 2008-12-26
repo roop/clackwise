@@ -102,22 +102,20 @@ libgroup :           // of type LibGroup*
 libgrouphead :       // of type LibGroup*
          variable '(' value_list ')'
          {
-           switch(any_cast<vector<any>*>($3)->size()) {
+           switch(any_cast<vector<string>*>($3)->size()) {
                case 0:  // value_list is empty
                    $$ = new LibGroup(any_cast<string>($1), string(""));
                    break;
                case 1:  // value list has one element
-                   $$ = new LibGroup(any_cast<string>($1),
-                             any_cast<string>((any_cast<vector<any>*>($3))->at(0)) );
+                   $$ = new LibGroup(any_cast<string>($1), any_cast<vector<string>*>($3)->at(0));
                    break;
                default: // value list has >1 element. bad.
-                   $$ = new LibGroup(any_cast<string>($1),
-                             any_cast<string>((any_cast<vector<any>*>($3))->at(0)) );
+                   $$ = new LibGroup(any_cast<string>($1), any_cast<vector<string>*>($3)->at(0));
                    cout << "Warning: Expected zero or one but got more as name for "
                         << any_cast<string>($1) << " at line " << cwlib_yylineno
                         << " of library file " << cwlib_libFilename
                         << ". Using the first value ("
-                        << any_cast<string>((any_cast<vector<any>*>($3))->at(0))
+                        << any_cast<string>((any_cast<vector<string>*>($3))->at(0))
                         << ") as the name." << endl;
            }
          }
@@ -190,11 +188,11 @@ simple_attribute :   // of type LibAttribute*
 complex_attribute :  // of type LibAttribute*
          variable   '('   value_list   ')'
          {
-           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<any>*>($3));
+           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
          }
        | variable   '('   value_list   ')'   ';'
          {
-           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<any>*>($3));
+           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
          }
        | variable '(' error ')'
          {
@@ -214,17 +212,17 @@ variable :           // of type string
 value :              // of type string
         INTEGER | REAL | KEYWORD | QUOTED_STRING | ANY_WORD ;
 
-value_list :         // of type vector<any>*
+value_list :         // of type vector<string>*
          {
-           $$ = new vector<any>(0);
+           $$ = new vector<string>(0);
          }
        | value
          {
-           $$ = new vector<any>(1, any_cast<string>($1));
+           $$ = new vector<string>(1, any_cast<string>($1));
          } 
        | value_list ',' value 
          {
-           any_cast<vector<any>*>($1)->push_back( any_cast<string>($3) );
+           any_cast<vector<string>*>($1)->push_back( any_cast<string>($3) );
            $$ = $1
          };
 

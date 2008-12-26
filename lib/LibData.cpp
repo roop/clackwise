@@ -43,6 +43,60 @@ LibAttribute::~LibAttribute() {
     }
 };
 
+// Define statements
+
+LibDefine::LibDefine(const string& d, const vector<string>* v) {
+    if (d == "define") {
+        if (v->size() < 3) {
+            type = LibDefine::Invalid;
+        } else {
+            name = v->at(0);
+            group = v->at(1);
+            type = getAttrType(v->at(2));
+        }
+    } else if (d == "define_group") {
+          if (v->size() < 2) {
+            type = LibDefine::Invalid;
+        } else {
+            name = v->at(0);
+            group = v->at(1);
+            type = LibDefine::Group;
+        }
+    }
+};
+
+LibDefine::Type LibDefine::getAttrType(const string& s) {
+    if (s == "boolean") {
+        return LibDefine::Boolean;
+    } else if (s == "string") {
+        return LibDefine::String;
+    } else if (s == "integer") {
+        return LibDefine::Integer;
+    } else if (s == "float") {
+        return LibDefine::Float;
+    } else {
+        return LibDefine::Invalid;
+    }
+};
+
+void LibDefine::Write(ostream& out) const {
+    if (type == LibDefine::Invalid) {
+      out << "/* Malformed define statement was skipped */" << endl;
+    } else if (type == LibDefine::Group) {
+      out << "define_group(" << name << ", " << group << ");" << endl;
+    } else {
+      out << "define(" << name << ", " << group << ", ";
+      switch(type) {
+        case LibDefine::Boolean: out << "boolean"; break;
+        case LibDefine::String:  out << "string"; break;
+        case LibDefine::Integer: out << "integer"; break;
+        case LibDefine::Float:   out << "float"; break;
+        default:                 out << "string"; break;
+      }
+      out << ");" << endl;
+    }
+};
+
 // Lib Group
 
 void LibGroup::setAttribute(const string& name, const any& value) {
@@ -82,12 +136,18 @@ void LibGroup::Write(ostream& out, const string& prefix) const {
               out << prefix << "    ";
               attr->Write(out);
           }
+        } else if (it->type() == typeid(LibDefine*)) {
+          LibDefine* define = any_cast<LibDefine*>(*it);
+          if (define) {
+              out << prefix << "    ";
+              define->Write(out);
+          }
         } else if (it->type() == typeid(LibGroup*)) {
           LibGroup* group = any_cast<LibGroup*>(*it);
           if (group)
               group->Write(out, prefix + "    ");
         } else {
-          out << prefix << "<unknown_obj>";
+          out << prefix << "/* <unknown_obj> */";
         }
     }
     out << prefix << "}" << endl;

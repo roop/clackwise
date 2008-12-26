@@ -1,0 +1,50 @@
+library(test.db) {
+/* 
+
+
+*/
+
+  technology(cmos);
+  delay_model : table_lookup;
+  nom_process : 2.0 ;
+      define_group(sec_acore_internal_power);
+  nom_voltage : 1.0 ;
+  nom_temperature : 50.0 ;
+  operating_conditions( "opcond_nom"  ) {
+      process : 2.0 ;
+      voltage : 1.0 ;
+      temperature : 50.0 ;
+   } /* current design opcond */
+
+  time_unit : "1ps" ;
+  voltage_unit : "1V" ;
+  define(xtreme, go, real);
+
+  type ( bus_2bit, poda, howdyudo ) {
+    base_type : array ;
+    data_type : bit ;
+    bit_width : 2 ;
+    bit_from : 0 ;
+    bit_to : 1 ;
+  } /* end of type */
+  cell(inv1x) {
+    area : 0.1 ;
+    bus (b) {
+      bus_type : bus_2bit ;
+      pin(a) {
+        direction: in;
+      }
+      pin(b) {
+        direction: out;
+        timing() {
+          timing_sense : negative_unate;
+          related_pin : "in";
+          fall_transition(scalar){
+             values("42") ;
+          }
+        }
+      } /* pin */
+    } /* bus */
+  } /* cell */
+} /* library test.db */
+

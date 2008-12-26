@@ -111,7 +111,7 @@ libgrouphead :       // of type LibGroup*
                    break;
                default: // value list has >1 element. bad.
                    $$ = new LibGroup(any_cast<string>($1), any_cast<vector<string>*>($3)->at(0));
-                   cout << "Warning: Expected zero or one but got more as name for "
+                   cout << "Warning: Expected zero or one items but got more as name for "
                         << any_cast<string>($1) << " at line " << cwlib_yylineno
                         << " of library file " << cwlib_libFilename
                         << ". Using the first value ("
@@ -154,7 +154,11 @@ libstatements :      // of type vector<any>*
          }
        | libstatements complex_attribute
          {
-           any_cast<vector<any>*>($1)->push_back( any_cast<LibAttribute*>($2) );
+           if ($2.type() == typeid(LibAttribute*)) {
+              any_cast<vector<any>*>($1)->push_back( any_cast<LibAttribute*>($2) );
+           } else if ($2.type() == typeid(LibDefine*)) {
+              any_cast<vector<any>*>($1)->push_back( any_cast<LibDefine*>($2) );
+           }
            $$ = $1;
          }
        | libstatements libgroup
@@ -185,19 +189,28 @@ simple_attribute :   // of type LibAttribute*
            $$ = (LibAttribute*) NULL;
          };
 
-complex_attribute :  // of type LibAttribute*
+complex_attribute :  // of type LibAttribute* or Define*
          variable   '('   value_list   ')'
          {
-           if (any_cast<string>($1) == "define") {
-             $$ = new Definition( any_cast<vector<string>*>($3) );
+           if (any_cast<string>($1) == "define" || any_cast<string>($1) == "define_group") {
+             // special case. there can be multiple valid lines with 'define'.
+             $$ = new LibDefine(any_cast<string>($1), any_cast<vector<string>*>($3) );
+             if (any_cast<LibDefine*>($$)->type == LibDefine::Invalid) {
+                cout << "Error: Malformed define statement at line " << cwlib_yylineno
+                     << " of library file " << cwlib_libFilename;
+             }
            } else {
              $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
            }
          }
        | variable   '('   value_list   ')'   ';'
          {
-           if (any_cast<string>($1) == "define") {
-             $$ = new Definition( any_cast<vector<string>*>($3) );
+           if (any_cast<string>($1) == "define" || any_cast<string>($1) == "define_group") {
+             $$ = new LibDefine(any_cast<string>($1), any_cast<vector<string>*>($3) );
+             if (any_cast<LibDefine*>($$)->type == LibDefine::Invalid) {
+                cout << "Error: define statement incorrect at line " << cwlib_yylineno
+                     << " of library file " << cwlib_libFilename << ". Skipped." << endl;
+             }
            } else {
              $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
            }

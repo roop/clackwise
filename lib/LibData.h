@@ -44,6 +44,29 @@ struct LibAttribute {
 };
 void WriteLibAttributeValue(ostream& out, const any& value);
 
+struct LibDefine {
+    enum Type {
+      Invalid = -1,
+      Boolean = 0,
+      String,
+      Integer,
+      Float,
+      Group
+    };
+    string name;
+    string group;
+    Type type;
+    static Type getAttrType(const string& s);
+    LibDefine(const string& n, const string& g, const Type t):
+                name(n), group(g), type(t) {};
+    // for define(a, b, c), call Define("define", ["a", "b", "c"])
+    // for define_group(a, b), call Define("define_group", ["a", "b"])
+    LibDefine(const string& d, const vector<string>* v);
+    ~LibDefine() {};
+    void Write(ostream& out) const;
+};
+
+
 class LibGroup {
 private:
     string groupName_;

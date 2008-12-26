@@ -193,11 +193,10 @@ complex_attribute :  // of type LibAttribute* or Define*
          variable   '('   value_list   ')'
          {
            if (any_cast<string>($1) == "define" || any_cast<string>($1) == "define_group") {
-             // special case. there can be multiple valid lines with 'define'.
              $$ = new LibDefine(any_cast<string>($1), any_cast<vector<string>*>($3) );
              if (any_cast<LibDefine*>($$)->type == LibDefine::Invalid) {
-                cout << "Error: Malformed define statement at line " << cwlib_yylineno
-                     << " of library file " << cwlib_libFilename;
+                cout << "Error: define or define_group statement incorrect at line " << cwlib_yylineno
+                     << " of library file " << cwlib_libFilename << ". Skipped." << endl;
              }
            } else {
              $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
@@ -208,7 +207,7 @@ complex_attribute :  // of type LibAttribute* or Define*
            if (any_cast<string>($1) == "define" || any_cast<string>($1) == "define_group") {
              $$ = new LibDefine(any_cast<string>($1), any_cast<vector<string>*>($3) );
              if (any_cast<LibDefine*>($$)->type == LibDefine::Invalid) {
-                cout << "Error: define statement incorrect at line " << cwlib_yylineno
+                cout << "Error: define or define_group statement incorrect at line " << cwlib_yylineno
                      << " of library file " << cwlib_libFilename << ". Skipped." << endl;
              }
            } else {

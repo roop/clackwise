@@ -1,0 +1,37 @@
+library(test.db) {
+/* Multiline comments can put the
+   line number tracking mechanism off.
+   So hence this testcase */
+  technology(cmos);
+  delay_model : table_lookup;
+
+  nom_process : 2.0 ;
+  nom_voltage : 1.0 ;
+  nom_temperature : 50.0 ;
+  operating_conditions( "opcond_nom"  ) {
+      process : 2.0 ;
+      voltage : 1.0 ;
+      temperature : 50.0 ;
+   } /* current design opcond */
+
+  time_unit : "1ps" ;
+  voltage_unit : "1V" ;
+
+  cell(inv1x, another, cell) {
+    area : 0.1 ;
+    pin(in) {
+      direction: in;
+    }
+    pin(out) {
+      direction: out;
+      timing() {
+        timing_sense : negative_unate : crap;
+        related_pin : "in";
+        fall_transition(scalar){
+           values("42") ;
+        }
+      }
+    } /* pin out */
+  } /* cell inv1x */
+} /* library test.db */
+

@@ -29,6 +29,7 @@ using namespace std;
 using namespace std::tr1;
 using namespace boost;
 
+// Lib Attribute
 
 void LibAttribute::Write(ostream& out) const {
     out << name << " : ";
@@ -42,6 +43,7 @@ LibAttribute::~LibAttribute() {
     }
 };
 
+// Lib Group
 
 void LibGroup::setAttribute(const string& name, const any& value) {
   // first, look up in our attributes_ hash
@@ -105,6 +107,8 @@ LibGroup::~LibGroup() {
     delete statements_;
 };
 
+// Function
+
 void WriteLibAttributeValue(ostream& out, const any& value) {
     if (value.type() == typeid(string)) {
         out << any_cast<string>(value);
@@ -121,6 +125,9 @@ void WriteLibAttributeValue(ostream& out, const any& value) {
         cout << "<unknown_obj>";
     }
 }
+
+// Sample calls
+
 /*
 int main() {
     LibGroup* l = new LibGroup("library", "18nm.db");

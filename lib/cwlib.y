@@ -188,11 +188,19 @@ simple_attribute :   // of type LibAttribute*
 complex_attribute :  // of type LibAttribute*
          variable   '('   value_list   ')'
          {
-           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
+           if (any_cast<string>($1) == "define") {
+             $$ = new Definition( any_cast<vector<string>*>($3) );
+           } else {
+             $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
+           }
          }
        | variable   '('   value_list   ')'   ';'
          {
-           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
+           if (any_cast<string>($1) == "define") {
+             $$ = new Definition( any_cast<vector<string>*>($3) );
+           } else {
+             $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<string>*>($3));
+           }
          }
        | variable '(' error ')'
          {

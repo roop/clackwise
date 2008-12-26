@@ -43,7 +43,7 @@ LibAttribute::~LibAttribute() {
 };
 
 
-void LibGroup::setAttribute(string name, any value) {
+void LibGroup::setAttribute(const string& name, const any& value) {
   // first, look up in our attributes_ hash
   unordered_map<string, int>::iterator where = attributes_.find(name);
   if (where != attributes_.end()) {
@@ -57,7 +57,7 @@ void LibGroup::setAttribute(string name, any value) {
   }
 };
 
-any LibGroup::attribute(string name) const {
+any LibGroup::attribute(const string& name) const {
     return any_cast<LibAttribute*>(statements_->at(attributes_.find(name)->second))->value;
 };
 
@@ -70,7 +70,7 @@ void LibGroup::addLibAttribute(LibAttribute *a) {
     attributes_[a->name] = statements_->size() - 1;
 };
 
-void LibGroup::Write(ostream& out, string prefix) const {
+void LibGroup::Write(ostream& out, const string& prefix) const {
     out << prefix << groupName() << "(" << name() << ")" << " {" << endl;
     for ( vector<any>::iterator it = statements_->begin();
           it != statements_->end(); ++it ) {
@@ -105,7 +105,7 @@ LibGroup::~LibGroup() {
     delete statements_;
 };
 
-void WriteLibAttributeValue(ostream& out, any value) {
+void WriteLibAttributeValue(ostream& out, const any& value) {
     if (value.type() == typeid(string)) {
         out << any_cast<string>(value);
     } else if (value.type() == typeid(vector<string>*)) {

@@ -38,11 +38,11 @@ struct LibAttribute {
     // value can be any of: 
     //   string        - like  time_unit : "1ns" ;
     //   vector<string>*  - like  line (26, 0, 100, 0);
-    LibAttribute(string n, any v): name(n), value(v) {};
+    LibAttribute(const string& n, const any& v): name(n), value(v) {};
     ~LibAttribute();
     void Write(ostream& out) const;
 };
-void WriteLibAttributeValue(ostream& out, any value);
+void WriteLibAttributeValue(ostream& out, const any& value);
 
 class LibGroup {
 private:
@@ -57,17 +57,17 @@ public:
         statements_ = new vector<any>(0);
     };
     ~LibGroup();
-    void setGroupName(string g) { groupName_ = g; }
+    void setGroupName(const string& g) { groupName_ = g; }
     string groupName() const { return groupName_; }
-    void setName(string n) { name_ = n; }
+    void setName(const string& n) { name_ = n; }
     string name() const { return name_; }
-    void setAttribute(string name, any value);
-    any attribute (string name) const;
+    void setAttribute(const string& name, const any& value);
+    any attribute (const string& name) const;
     void addLibGroup(LibGroup *g); // add a sub-group to this libgroup
     void addLibAttribute(LibAttribute *a); // add a sub-group to this libgroup
     void setStatements(vector<any>* statements) { delete statements_; statements_ = statements; };
     vector<any>* statements() const { return statements_; };
-    void Write(ostream& out, string prefix="") const;
+    void Write(ostream& out, const string& prefix="") const;
 };
 
 #endif

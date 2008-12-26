@@ -111,9 +111,8 @@ public:
     int multivaluedAttributesCount() const;
 
     QString toText(const QString& prefix = QString("")) const;
-    bool readDotLib(const QString& filename);
 
-private:
+protected:
     void ref();
     void deref();
     void copyOnWrite();

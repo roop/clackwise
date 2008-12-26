@@ -9,8 +9,10 @@ OBJECTS_DIR = build
 CONFIG += debug
 
 # Input
-HEADERS += LibGroup.h
+HEADERS += LibGroup.h \
+           DotLib.h
 SOURCES += LibGroup.cpp \
+           DotLib.cpp \
            main.cpp
 
 LEXSOURCES += liberty.l

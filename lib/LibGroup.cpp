@@ -290,3 +290,13 @@ QString LibGroup::toText(const QString &prefix) const
     return outStr;
 }
 
+bool LibGroup::readDotLib(const QString& filename) {
+    LibGroup* lg = parseLiberty(filename);
+    if (lg == NULL) {
+        return false;
+    }
+    *this = *lg;
+    delete lg;
+    return true;
+}
+

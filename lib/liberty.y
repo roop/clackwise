@@ -37,7 +37,7 @@ extern int libertylineno;
 QString libertyFilename = "";
 static bool parseErrorRecoveryTriggered;
 
-LibGroup* parseLib(const QString &filename) {
+LibGroup* parseLiberty(const QString &filename) {
     libertydebug = 0;
 
     libertyFilename = filename;

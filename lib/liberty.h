@@ -24,7 +24,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LibGroup.h"
 
-LibGroup* parseLib(const QString &filename);
+LibGroup* parseLiberty(const QString &filename);
 
 #endif
 

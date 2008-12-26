@@ -26,14 +26,21 @@ library(test.db) {
     area : 0.1 ;
     bus (b) {
       bus_type : bus_2bit ;
-      pin(b[0]) {
+      pin(b0) {
         direction: in;
       }
-      pin(b[1]) {
+      pin(b1) {
         direction: out;
         timing() {
           timing_sense : negative_unate;
-          related_pin : "in";
+          related_pin : "in"
+          ; f f
+          (
+          ) 
+          ;
+          f : g; g
+          : g
+          f : t y : h
           fall_transition(scalar){
              values("42") ;
           }

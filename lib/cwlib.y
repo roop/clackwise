@@ -45,27 +45,36 @@ int cwlib_yylex(void);
 
 extern int cwlib_yydebug;
 extern FILE* cwlib_yyin;
-int cwlib_linenum = 1; 
-string cwlib_libfilename = "";
+int cwlib_lineNum = 1; 
+string cwlib_libFilename = "";
+bool cwlib_parseError;
 
 LibGroup * parseLib(string libFile) {
+ //   cwlib_yydebug = 1;
+
     cwlib_yyin = fopen( libFile.c_str(), "r" );
     if (cwlib_yyin == NULL) {
       cout << "Error: Can't open lib file " << libFile << " for reading" << endl;
       return NULL;
     }
-    cwlib_libfilename = libFile;
+    cwlib_libFilename = libFile;
+    cwlib_parseError = false;
     any p;
-    if (cwlib_yyparse(p) == 0 && p.type() == typeid(LibGroup*))
+    // cwlib_yyparse(p);
+    // if (p.type() == typeid(LibGroup*))
+    //     return any_cast<LibGroup*>(p);
+    // else
+    //     return NULL;
+    if (cwlib_yyparse(p) == 0 && !cwlib_parseError && p.type() == typeid(LibGroup*))
         return any_cast<LibGroup*>(p);
     else
         return NULL;
     fclose(cwlib_yyin);
 }
 
-void cwlib_yyerror(any& ret, const char *str)
-{
-        printf("Error: '%s' at line %d of library file %s\n", str, cwlib_linenum, any_cast<string>(cwlib_libfilename).c_str());
+void cwlib_yyerror(any& ret, const char *str) {
+    cwlib_parseError = true;
+    printf("Error: %s at line %d of library file %s\n", str, cwlib_lineNum, any_cast<string>(cwlib_libFilename).c_str());
 }
  
   
@@ -85,11 +94,10 @@ everything :         // of Type LibGroup*
 libgroup :           // of type LibGroup*
          libgrouphead libgrouptail
          {
-           any_cast<LibGroup*>($1)->setStatements( any_cast<vector<any>*>($2) );
+           if (any_cast<LibGroup*>($1))
+             any_cast<LibGroup*>($1)->setStatements( any_cast<vector<any>*>($2) );
            $$ = $1;
          }
-       | error '}'    // skip till the next '}' when an error occurs
-         ;
 
 libgrouphead :       // of type LibGroup*
          variable '(' value_list ')'
@@ -106,19 +114,36 @@ libgrouphead :       // of type LibGroup*
                    $$ = new LibGroup(any_cast<string>($1),
                              any_cast<string>((any_cast<vector<any>*>($3))->at(0)) );
                    cout << "Warning: Expected zero or one but got more as name for "
-                        << any_cast<string>($1) << " at line " << cwlib_linenum
-                        << " of library file " << cwlib_libfilename
+                        << any_cast<string>($1) << " at line " << cwlib_lineNum
+                        << " of library file " << cwlib_libFilename
                         << ". Using the first value ("
                         << any_cast<string>((any_cast<vector<any>*>($3))->at(0))
                         << ") as the name." << endl;
            }
+         }
+       | variable '(' error ')'
+         {
+           $$ = (LibGroup*) NULL;
+         }
+       | error '(' value_list ')'
+         {
+           $$ = (LibGroup*) NULL;
+         }
+       | error '(' error ')'
+         {
+           $$ = (LibGroup*) NULL;
          };
 
 libgrouptail :       // of type vector<any>*
          '{' libstatements '}' 
          {
            $$ = $2;
-         };
+         }
+       | '{' libstatements '}' ';'
+         {
+           $$ = $2;
+         }
+         ;
 
 libstatements :      // of type vector<any>*
          {
@@ -144,12 +169,44 @@ simple_attribute :   // of type LibAttribute*
          variable   ':'   value    
          {
            $$ = new LibAttribute(any_cast<string>($1), any_cast<string>($3));
-         } 
+         }
+       | variable   ':'   value    ';'
+         {
+           $$ = new LibAttribute(any_cast<string>($1), any_cast<string>($3));
+         }
+       | variable ':' error
+         {
+           $$ = (LibAttribute*) NULL;
+         }
+       | error ':' value
+         {
+           $$ = (LibAttribute*) NULL;
+         }
+       | error ':' error
+         {
+           $$ = (LibAttribute*) NULL;
+         };
 
 complex_attribute :  // of type LibAttribute*
          variable   '('   value_list   ')'
          {
            $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<any>*>($3));
+         }
+       | variable   '('   value_list   ')'   ';'
+         {
+           $$ = new LibAttribute(any_cast<string>($1), any_cast<vector<any>*>($3));
+         }
+       | variable '(' error ')'
+         {
+           $$ = (LibAttribute*) NULL;
+         }
+       | error '(' value_list ')'
+         {
+           $$ = (LibAttribute*) NULL;
+         }
+       | error '(' error ')'
+         {
+           $$ = (LibAttribute*) NULL;
          };
 
 variable :           // of type string
@@ -171,4 +228,4 @@ value_list :         // of type vector<any>*
            $$ = $1
          };
 
-
+// TODO: %destructor{ delete $$ }

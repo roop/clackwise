@@ -30,12 +30,12 @@ using namespace std;
 using namespace boost;
 
 #include "cwlib.bison.hh"
-extern int cwlib_linenum; 
+extern int cwlib_lineNum; 
 %}
 
 %%
 \/\*([^\*]*|\*[^\/]*)\*\/      ; /*ignore comments*/
-\\[ \t]*\n                     cwlib_linenum++; /* but increment line number */
+\\[ \t]*\n                     cwlib_lineNum++; /* but increment line number */
                                /* ignore continued-on-next-line-slashes */
 [a-zA-Z_][a-zA-Z0-9_]*                               cwlib_yylval = (any) string(yytext); return KEYWORD;
 (\+|-)?[0-9]+                                        cwlib_yylval = (any) string(yytext); return INTEGER;
@@ -43,15 +43,15 @@ extern int cwlib_linenum;
 \"[^\"]*\"                                           cwlib_yylval = (any) string(yytext); return QUOTED_STRING;
 [a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+\([0-9]+\)   cwlib_yylval = (any) string(yytext); return ANY_WORD;
 [a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             cwlib_yylval = (any) string(yytext); return ANY_WORD;
-\n                             cwlib_linenum++; /* increment line number */
+\n                             cwlib_lineNum++; /* increment line number */
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */
-\;                             ; /* ignore ';' itself (see comments at the end) */
 .                              return (char) yytext[0]; 
 %%
 
+// \;                             ; /* ignore ';' itself (see comments at the end) */
+
 // ignoring ';' because whitespace instead of ';' as a separator is acceptible
 // and is sufficient to separate the tokens
-
 
 

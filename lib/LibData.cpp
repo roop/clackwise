@@ -76,11 +76,14 @@ void LibGroup::Write(ostream& out, string prefix) {
           it != statements_->end(); ++it ) {
         if (it->type() == typeid(LibAttribute*)) {
           LibAttribute* attr = any_cast<LibAttribute*>(*it);
-          out << prefix << "    ";
-          attr->Write(out);
+          if (attr) {
+              out << prefix << "    ";
+              attr->Write(out);
+          }
         } else if (it->type() == typeid(LibGroup*)) {
           LibGroup* group = any_cast<LibGroup*>(*it);
-          group->Write(out, prefix + "    ");
+          if (group)
+              group->Write(out, prefix + "    ");
         } else {
           out << prefix << "<unknown_obj>";
         }

@@ -45,7 +45,7 @@ int cwlib_yylex(void);
 
 extern int cwlib_yydebug;
 extern FILE* cwlib_yyin;
-int cwlib_lineNum = 1; 
+extern int cwlib_yylineno;
 string cwlib_libFilename = "";
 bool cwlib_parseError;
 
@@ -74,7 +74,7 @@ LibGroup * parseLib(string libFile) {
 
 void cwlib_yyerror(any& ret, const char *str) {
     cwlib_parseError = true;
-    printf("Error: %s at line %d of library file %s\n", str, cwlib_lineNum, any_cast<string>(cwlib_libFilename).c_str());
+    printf("Error: %s at line %d of library file %s\n", str, cwlib_yylineno, any_cast<string>(cwlib_libFilename).c_str());
 }
  
   
@@ -114,7 +114,7 @@ libgrouphead :       // of type LibGroup*
                    $$ = new LibGroup(any_cast<string>($1),
                              any_cast<string>((any_cast<vector<any>*>($3))->at(0)) );
                    cout << "Warning: Expected zero or one but got more as name for "
-                        << any_cast<string>($1) << " at line " << cwlib_lineNum
+                        << any_cast<string>($1) << " at line " << cwlib_yylineno
                         << " of library file " << cwlib_libFilename
                         << ". Using the first value ("
                         << any_cast<string>((any_cast<vector<any>*>($3))->at(0))

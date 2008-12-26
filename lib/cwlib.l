@@ -30,12 +30,11 @@ using namespace std;
 using namespace boost;
 
 #include "cwlib.bison.hh"
-extern int cwlib_lineNum; 
 %}
-
+%option yylineno
 %%
 \/\*([^\*]*|\*[^\/]*)\*\/      ; /*ignore comments*/
-\\[ \t]*\n                     cwlib_lineNum++; /* but increment line number */
+\\[ \t]*\n                     ;
                                /* ignore continued-on-next-line-slashes */
 [a-zA-Z_][a-zA-Z0-9_]*                               cwlib_yylval = (any) string(yytext); return KEYWORD;
 (\+|-)?[0-9]+                                        cwlib_yylval = (any) string(yytext); return INTEGER;
@@ -43,7 +42,7 @@ extern int cwlib_lineNum;
 \"[^\"]*\"                                           cwlib_yylval = (any) string(yytext); return QUOTED_STRING;
 [a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+\([0-9]+\)   cwlib_yylval = (any) string(yytext); return ANY_WORD;
 [a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             cwlib_yylval = (any) string(yytext); return ANY_WORD;
-\n                             cwlib_lineNum++; /* increment line number */
+\n                             ;
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */
 .                              return (char) yytext[0]; 

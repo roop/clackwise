@@ -11,7 +11,7 @@ CONFIG += debug
 # Input
 HEADERS += LibGroup.h
 SOURCES += LibGroup.cpp \
-           qmain.cpp
+           main.cpp
 
 LEXSOURCES += liberty.l
 YACCSOURCES += liberty.y

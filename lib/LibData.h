@@ -71,7 +71,7 @@ class LibGroup {
 private:
     string groupName_;
     string name_;
-    // common list to store elements of LibAttribute* and LibGroup*
+    // common list to store elements of LibAttribute*, LibGroup* and LibDefine*
     vector<any>* statements_;
     // attributes_[name] = index into the statements_ vector (for fast lookup of attributes)
     unordered_map<string, int> attributes_;

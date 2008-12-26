@@ -19,15 +19,21 @@
 
 all: bin/cwlib
 
+tmp:
+	mkdir -p tmp/
+
+bin:
+	mkdir -p bin/
+
 tmp/cwlib.yy.c: cwlib.l cwlib.h tmp/cwlib.bison.hh
 	flex  -o tmp/cwlib.yy.c --prefix cwlib_yy cwlib.l
 
-tmp/cwlib.bison.hh: cwlib.y cwlib.h
+tmp/cwlib.bison.hh: cwlib.y cwlib.h tmp
 	bison -d  cwlib.y -o tmp/cwlib.bison.cc -p cwlib_yy --debug  --verbose
 tmp/cwlib.bison.cc: tmp/cwlib.bison.hh
 
-bin/cwlib: tmp/cwlib.bison.cc tmp/cwlib.yy.c main.cpp LibData.cpp
-	g++ -g -Itmp -I. $^ -o bin/cwlib
+bin/cwlib: tmp/cwlib.bison.cc tmp/cwlib.yy.c main.cpp LibData.cpp bin
+	g++ -g -Itmp -I. tmp/cwlib.bison.cc tmp/cwlib.yy.c main.cpp LibData.cpp -o bin/cwlib
 
 clean:
 	rm -rf tmp/* bin/*

@@ -1,7 +1,9 @@
 #include <QTextStream>
+#include <QDebug>
 #include "LibGroup.h"
+#include "liberty.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     LibGroup library;
     library.setType("library");
     library.setName("BU110");
@@ -25,6 +27,11 @@ int main() {
 	library.insertSubgroup(library.subgroupsCount(), &buf);;
 
 	QTextStream qout(stdout);
-	qout << library.toText();
+	// qout << library.toText();
+	LibGroup* lg = parseLib(argv[1]);
+	if (lg) {
+		qDebug() << lg->name() << " " << lg->type();
+		qout << lg->toText();
+	}
 }
 

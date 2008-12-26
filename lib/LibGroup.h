@@ -24,6 +24,9 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QTextStream>
 
+#ifndef LIBGROUP_H
+#define LIBGROUP_H
+
 class LibGroup {
 public:
     enum LibAttributeValueType {
@@ -47,6 +50,7 @@ public:
     QString name() const;
 
     void insertSubgroup(int position, LibGroup *lg);
+    void addSubgroup(LibGroup *lg);
     void replaceSubgroup(int position, LibGroup *lg);
     void removeSubgroupAt(int position);
     const LibGroup* subgroupAt(int position) const;
@@ -118,4 +122,6 @@ private:
     QList<LibGroup*> m_subgroups;
 };
 
+Q_DECLARE_METATYPE(LibGroup*)
 
+#endif

@@ -20,28 +20,26 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 %{
-#include <stdio.h>
-#include <iostream>
-#include <boost/any.hpp>
+#include <QDebug>
+#include <QVariant>
 
-#define YYSTYPE any
+#define YYSTYPE QVariant
+#include "liberty_yacc.h"
 
-using namespace std;
-using namespace boost;
+extern "C" int libertywrap() { return 1; }
 
-#include "cwlib.bison.hh"
 %}
 %option yylineno
 %%
 \/\*([^\*]*|\*[^\/]*)\*\/      ; /*ignore comments*/
 \\[ \t]*\n                     ;
                                /* ignore continued-on-next-line-slashes */
-[a-zA-Z_][a-zA-Z0-9_]*                               cwlib_yylval = (any) string(yytext); return KEYWORD;
-(\+|-)?[0-9]+                                        cwlib_yylval = (any) string(yytext); return INTEGER;
-(\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     cwlib_yylval = (any) string(yytext); return REAL;
-\"[^\"]*\"                                           cwlib_yylval = (any) string(yytext); return QUOTED_STRING;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   cwlib_yylval = (any) string(yytext); return ANY_WORD;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             cwlib_yylval = (any) string(yytext); return ANY_WORD;
+[a-zA-Z_][a-zA-Z0-9_]*                               libertylval = QString(yytext); return KEYWORD;
+(\+|-)?[0-9]+                                        libertylval = QString(yytext); return INTEGER;
+(\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     libertylval = QString(yytext); return REAL;
+\"[^\"]*\"                                           libertylval = QString(yytext); return QUOTED_STRING;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   libertylval = QString(yytext); return ANY_WORD;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             libertylval = QString(yytext); return ANY_WORD;
 \n                             ;
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */

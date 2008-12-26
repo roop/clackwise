@@ -19,12 +19,12 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef CWLIB_H
+#ifndef LIBERTY_H
+#define LIBERTY_H
 
-#define CWLIB_H
+#include "LibGroup.h"
 
-#include "LibData.h"
-LibGroup * parseLib(string libFile);
+LibGroup* parseLib(const QString &filename);
 
 #endif
 

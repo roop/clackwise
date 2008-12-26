@@ -51,6 +51,10 @@ void LibGroup::insertSubgroup(int position, LibGroup *lg) {
     m_subgroups.insert(position, lg);
 }
 
+void LibGroup::addSubgroup(LibGroup *lg) {
+	insertSubgroup(subgroupsCount(), lg);
+}
+
 void LibGroup::replaceSubgroup(int position, LibGroup *lg) {
     m_subgroups[position] = lg;
 }

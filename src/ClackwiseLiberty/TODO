@@ -1,1 +1,2 @@
 - support read/write of gzippped .libs
+- perl bindings

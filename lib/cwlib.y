@@ -83,9 +83,7 @@ everything :         // of Type LibGroup*
          };
 
 libgroup :           // of type LibGroup*
-         libgrouphead libgrouptail    // Separating head and tail so that we get the
-                                      // lib name *before* the whole libgroup is parsed.
-                                      // Useful while printing errors.
+         libgrouphead libgrouptail
          {
            any_cast<LibGroup*>($1)->setStatements( any_cast<vector<any>*>($2) );
            $$ = $1;
@@ -108,8 +106,8 @@ libgrouphead :       // of type LibGroup*
                    $$ = new LibGroup(any_cast<string>($1),
                              any_cast<string>((any_cast<vector<any>*>($3))->at(0)) );
                    cout << "Warning: Expected zero or one but got more as name for "
-                        << any_cast<string>($1) << "at line " << cwlib_linenum
-                        << "of library file " << cwlib_libfilename
+                        << any_cast<string>($1) << " at line " << cwlib_linenum
+                        << " of library file " << cwlib_libfilename
                         << ". Using the first value ("
                         << any_cast<string>((any_cast<vector<any>*>($3))->at(0))
                         << ") as the name." << endl;

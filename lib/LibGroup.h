@@ -27,18 +27,19 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LIBGROUP_H
 #define LIBGROUP_H
 
-class LibGroup {
+class LibGroup
+{
 public:
     enum LibAttributeValueType {
-      Invalid = -1,
-      Boolean = 0,
-      String,
-      Integer,
-      Float,
-      Group
+        Invalid = -1,
+        Boolean = 0,
+        String,
+        Integer,
+        Float,
+        Group
     };
 
-    LibGroup(QString type="", QString name="");
+    LibGroup(QString type = "", QString name = "");
     ~LibGroup();
 
     // type, like bus in bus(w[1])
@@ -64,10 +65,10 @@ public:
     // any existing attribute of the same name will be replaced
     void setComplexAttribute(QString name, QStringList value);
     void setComplexAttribute(QString name, QString value1,
-                                           QString value2=QString(),
-                                           QString value3=QString(),
-                                           QString value4=QString(),
-                                           QString value5=QString() );
+                             QString value2 = QString(),
+                             QString value3 = QString(),
+                             QString value4 = QString(),
+                             QString value5 = QString());
 
     // set a multivalued complex attribute
     // all existing attributes of the same name will be kept
@@ -75,10 +76,10 @@ public:
     // which can occur multiple times legally
     void setMultivaluedAttribute(QString name, QStringList value);
     void setMultivaluedAttribute(QString name, QString value1,
-                                               QString value2=QString(),
-                                               QString value3=QString(),
-                                               QString value4=QString(),
-                                               QString value5=QString() );
+                                 QString value2 = QString(),
+                                 QString value3 = QString(),
+                                 QString value4 = QString(),
+                                 QString value5 = QString());
 
     // remove an attribute
     void removeAttribute(QString name);
@@ -107,7 +108,7 @@ public:
     int complexAttributesCount() const;
     int multivaluedAttributesCount() const;
 
-    QString toText(const QString& prefix=QString("")) const;
+    QString toText(const QString& prefix = QString("")) const;
 
 private:
     QString m_type;

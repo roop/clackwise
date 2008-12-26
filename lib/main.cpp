@@ -22,14 +22,15 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "cwlib.h"
 #include "LibData.h"
 
-int main(int argc, char*argv[]) {
-  if (argc <= 1) {
-      cout << "Usage: " << argv[0] << " <libfile>" << endl;
-      return 1;
-  }
-  LibGroup* l = parseLib(argv[1]);
-  if (l)
-      l->Write(cout);
-  delete l;
+int main(int argc, char*argv[])
+{
+    if (argc <= 1) {
+        cout << "Usage: " << argv[0] << " <libfile>" << endl;
+        return 1;
+    }
+    LibGroup* l = parseLib(argv[1]);
+    if (l)
+        l->Write(cout);
+    delete l;
 }
 

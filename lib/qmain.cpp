@@ -3,7 +3,8 @@
 #include "LibGroup.h"
 #include "liberty.h"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     LibGroup library;
     library.setType("library");
     library.setName("BU110");
@@ -15,23 +16,23 @@ int main(int argc, char *argv[]) {
     library.setMultivaluedAttribute("define", "prickiness", "pin", "float");
     library.setMultivaluedAttribute("define", "is_port", "pin", "boolean");
     library.setMultivaluedAttribute("define", "is_hierarchical", "cell", "boolean");
-	LibGroup buf("cell", "bu110");
-	buf.setSimpleAttribute("area", "5");
+    LibGroup buf("cell", "bu110");
+    buf.setSimpleAttribute("area", "5");
     buf.setComplexAttribute("complex", "\"5+27i\"");
-	LibGroup a("pin", "a");
-	a.setSimpleAttribute("direction", "in");
-	LibGroup y("pin", "y");
-	y.setSimpleAttribute("direction", "out");
-	buf.insertSubgroup(buf.subgroupsCount(), &a);
-	buf.insertSubgroup(buf.subgroupsCount(), &y);
-	library.insertSubgroup(library.subgroupsCount(), &buf);;
+    LibGroup a("pin", "a");
+    a.setSimpleAttribute("direction", "in");
+    LibGroup y("pin", "y");
+    y.setSimpleAttribute("direction", "out");
+    buf.insertSubgroup(buf.subgroupsCount(), &a);
+    buf.insertSubgroup(buf.subgroupsCount(), &y);
+    library.insertSubgroup(library.subgroupsCount(), &buf);;
 
-	QTextStream qout(stdout);
-	// qout << library.toText();
-	LibGroup* lg = parseLib(argv[1]);
-	if (lg) {
-		qDebug() << lg->name() << " " << lg->type();
-		qout << lg->toText();
-	}
+    QTextStream qout(stdout);
+    // qout << library.toText();
+    LibGroup* lg = parseLib(argv[1]);
+    if (lg) {
+        qDebug() << lg->name() << " " << lg->type();
+        qout << lg->toText();
+    }
 }
 

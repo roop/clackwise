@@ -41,6 +41,8 @@ public:
 
     LibGroup(QString type = "", QString name = "");
     ~LibGroup();
+    LibGroup(const LibGroup &other);
+    LibGroup& operator=(const LibGroup &other);
 
     // type, like bus in bus(w[1])
     void setType(QString type);
@@ -111,16 +113,12 @@ public:
     QString toText(const QString& prefix = QString("")) const;
 
 private:
-    QString m_type;
-    QString m_name;
+    void ref();
+    void deref();
+    void copyOnWrite();
 
-    // store simple and complex attributes
-    // if the value is a list, it's a complex attribute. (like capacitive_load_unit(1,pf); )
-    // else a simple attribute. (like voltage_unit: 1mV; )
-    QMultiMap<QString, QVariant> m_attributes;
-
-    // store subgroups
-    QList<LibGroup*> m_subgroups;
+    class Private;
+    Private *d;
 };
 
 Q_DECLARE_METATYPE(LibGroup*)

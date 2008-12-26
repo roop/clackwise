@@ -23,39 +23,113 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDebug>
 
 #include "LibGroup.h"
+#include "liberty.h"
+
+class LibGroup::Private
+{
+public:
+    Private(QString type, QString name)
+            : m_type(type), m_name(name), refCount(1) {
+    }
+    ~Private() {
+    };
+
+    QString m_type;
+    QString m_name;
+
+    // store simple and complex attributes
+    // if the value is a list, it's a complex attribute. (like capacitive_load_unit(1,pf); )
+    // else a simple attribute. (like voltage_unit: 1mV; )
+    QMultiMap<QString, QVariant> m_attributes;
+
+    // store subgroups
+    QList<LibGroup*> m_subgroups;
+
+    // reference count for implicit sharing
+    int refCount;
+};
 
 LibGroup::LibGroup(QString type, QString name)
-        : m_type(type), m_name(name)
+        : d(new Private(type, name))
 {
+}
+
+LibGroup::LibGroup(const LibGroup &other)
+        : d(other.d)
+{
+    ref();
+}
+
+LibGroup& LibGroup::operator=(const LibGroup & other)
+{
+    if (this != &other) {
+        deref();
+        d = other.d;
+        ref();
+    }
+    return *this;
 }
 
 LibGroup::~LibGroup()
 {
+    deref();
+}
+
+void LibGroup::ref()
+{
+    Q_ASSERT(d);
+    Q_ASSERT(d->refCount);
+    d->refCount++;
+}
+
+void LibGroup::deref()
+{
+    Q_ASSERT(d);
+    Q_ASSERT(d->refCount);
+    d->refCount--;
+    if (d->refCount == 0) {
+        delete d;
+        d = 0;
+    }
+}
+
+void LibGroup::copyOnWrite()
+{
+    if (d->refCount > 1) {
+        deref();
+        Private *new_d = new Private(type(), name());
+        new_d->m_attributes = d->m_attributes;
+        new_d->m_subgroups = d->m_subgroups;
+        d = new_d;
+    }
 }
 
 void LibGroup::setType(QString type)
 {
-    m_type = type;
+    copyOnWrite();
+    d->m_type = type;
 }
 
 QString LibGroup::type() const
 {
-    return m_type;
+    return d->m_type;
 }
 
 void LibGroup::setName(QString name)
 {
-    m_name = name;
+    copyOnWrite();
+    d->m_name = name;
 }
 
 QString LibGroup::name() const
 {
-    return m_name;
+    return d->m_name;
 }
 
 void LibGroup::insertSubgroup(int position, LibGroup *lg)
 {
-    m_subgroups.insert(position, lg);
+    copyOnWrite();
+    d->m_subgroups.insert(position, lg);
 }
 
 void LibGroup::addSubgroup(LibGroup *lg)
@@ -65,32 +139,37 @@ void LibGroup::addSubgroup(LibGroup *lg)
 
 void LibGroup::replaceSubgroup(int position, LibGroup *lg)
 {
-    m_subgroups[position] = lg;
+    copyOnWrite();
+    d->m_subgroups[position] = lg;
 }
 
 void LibGroup::removeSubgroupAt(int position)
 {
-    m_subgroups.removeAt(position);
+    copyOnWrite();
+    d->m_subgroups.removeAt(position);
 }
 
 void LibGroup::clearSubgroups()
 {
-    m_subgroups.clear();
+    copyOnWrite();
+    d->m_subgroups.clear();
 }
 
 const LibGroup* LibGroup::subgroupAt(int position) const
 {
-    return m_subgroups.at(position);
+    return d->m_subgroups.at(position);
 }
 
 void LibGroup::setSimpleAttribute(QString name, QString value)
 {
-    m_attributes.replace(name, value);
+    copyOnWrite();
+    d->m_attributes.replace(name, value);
 }
 
 void LibGroup::setComplexAttribute(QString name, QStringList value)
 {
-    m_attributes.replace(name, value);
+    copyOnWrite();
+    d->m_attributes.replace(name, value);
 }
 
 void LibGroup::setComplexAttribute(QString name, QString value1,
@@ -114,7 +193,8 @@ void LibGroup::setComplexAttribute(QString name, QString value1,
 
 void LibGroup::setMultivaluedAttribute(QString name, QStringList value)
 {
-    m_attributes.insert(name, value);
+    copyOnWrite();
+    d->m_attributes.insert(name, value);
 }
 
 void LibGroup::setMultivaluedAttribute(QString name, QString value1,
@@ -135,19 +215,22 @@ void LibGroup::setMultivaluedAttribute(QString name, QString value1,
         valueList.append(value5);
     setMultivaluedAttribute(name, valueList);
 }
+
 void LibGroup::removeAttribute(QString name)
 {
-    m_attributes.remove(name);
+    copyOnWrite();
+    d->m_attributes.remove(name);
 }
 
 void LibGroup::removeAttribute(QString name, QVariant value)
 {
-    m_attributes.remove(name, value);
+    copyOnWrite();
+    d->m_attributes.remove(name, value);
 }
 
 QVariant LibGroup::attributeValue(QString name) const
 {
-    QVariantList values = m_attributes.values(name);
+    QVariantList values = d->m_attributes.values(name);
     if (values.size() == 1) {
         return values.at(0);
     }
@@ -156,22 +239,23 @@ QVariant LibGroup::attributeValue(QString name) const
 
 void LibGroup::clearAttributes()
 {
-    m_attributes.clear();
+    copyOnWrite();
+    d->m_attributes.clear();
 }
 
 QStringList LibGroup::attributes() const
 {
-    return m_attributes.uniqueKeys();
+    return d->m_attributes.uniqueKeys();
 }
 
 int LibGroup::subgroupsCount() const
 {
-    return m_subgroups.size();
+    return d->m_subgroups.size();
 }
 
 int LibGroup::attributesCount() const
 {
-    return m_attributes.size();
+    return d->m_attributes.size();
 }
 
 QString LibGroup::toText(const QString &prefix) const

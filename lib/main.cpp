@@ -30,5 +30,6 @@ int main(int argc, char*argv[]) {
   LibGroup* l = parseLib(argv[1]);
   if (l)
       l->Write(cout);
+  delete l;
 }
 

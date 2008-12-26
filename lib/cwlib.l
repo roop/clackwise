@@ -40,7 +40,7 @@ using namespace boost;
 (\+|-)?[0-9]+                                        cwlib_yylval = (any) string(yytext); return INTEGER;
 (\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     cwlib_yylval = (any) string(yytext); return REAL;
 \"[^\"]*\"                                           cwlib_yylval = (any) string(yytext); return QUOTED_STRING;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+\([0-9]+\)   cwlib_yylval = (any) string(yytext); return ANY_WORD;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   cwlib_yylval = (any) string(yytext); return ANY_WORD;
 [a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             cwlib_yylval = (any) string(yytext); return ANY_WORD;
 \n                             ;
                                /* ignore newline */

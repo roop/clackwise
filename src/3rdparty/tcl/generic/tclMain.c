@@ -228,7 +228,8 @@ Tcl_Main(argc, argv, appInitProc)
     Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), "\n", 1);
 #endif
 
-    strcat(cwInitTcl, dirname(argv[0]));
+    setenv("CLACKWISE_ROOT", dirname(argv[0]), 0 /* no overwriting */);
+    strcat(cwInitTcl, getenv("CLACKWISE_ROOT"));
     strcat(cwInitTcl, "/lib/clackwise/init.tcl");
     if (cwInitTcl_fp = fopen(cwInitTcl, "r")) {
         fclose(cwInitTcl_fp);

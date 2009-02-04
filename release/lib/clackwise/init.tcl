@@ -1,3 +1,3 @@
 puts "Loading ClackwiseLiberty module ...\n"
-load $env(TCL_LIBRARY)/../libClackwiseLiberty.so ClackwiseLiberty
+load $env(CLACKWISE_ROOT)/lib/libClackwiseLiberty.so ClackwiseLiberty
 

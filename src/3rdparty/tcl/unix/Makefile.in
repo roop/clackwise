@@ -606,7 +606,7 @@ gendate:
 dltest.marker:
 	cd dltest ; $(MAKE)
 
-INSTALL_TARGETS = install-binaries install-libraries install-doc @EXTRA_INSTALL@
+INSTALL_TARGETS = install-binaries install-libraries @EXTRA_INSTALL@
 
 install: $(INSTALL_TARGETS)
 
@@ -651,7 +651,7 @@ install-binaries: binaries
 	@EXTRA_INSTALL_BINARIES@
 
 install-libraries: libraries
-	@for i in $(INCLUDE_INSTALL_DIR) $(SCRIPT_INSTALL_DIR); \
+	@for i in $(SCRIPT_INSTALL_DIR); \
 	    do \
 	    if [ ! -d $$i ] ; then \
 		echo "Making directory $$i"; \
@@ -660,59 +660,15 @@ install-libraries: libraries
 		else true; \
 		fi; \
 	    done;
-	@for i in http2.5 http1.0 opt0.4 encoding msgcat1.3 tcltest2.2; \
-	    do \
-	    if [ ! -d $(SCRIPT_INSTALL_DIR)/$$i ] ; then \
-		echo "Making directory $(SCRIPT_INSTALL_DIR)/$$i"; \
-		mkdir -p $(SCRIPT_INSTALL_DIR)/$$i; \
-		chmod 755 $(SCRIPT_INSTALL_DIR)/$$i; \
-		else true; \
-		fi; \
-	    done;
 	@if test ! -x $(SRC_DIR)/install-sh; then \
 	    chmod +x $(SRC_DIR)/install-sh; \
 	    fi
-	@echo "Installing header files";
-	@for i in $(GENERIC_DIR)/tcl.h $(GENERIC_DIR)/tclDecls.h \
-		$(GENERIC_DIR)/tclPlatDecls.h; \
-	    do \
-	    $(INSTALL_DATA) $$i $(INCLUDE_INSTALL_DIR); \
-	    done;
 	@echo "Installing library files to $(SCRIPT_INSTALL_DIR)";
 	@for i in $(TOP_DIR)/library/*.tcl $(TOP_DIR)/library/tclIndex \
 		$(UNIX_DIR)/tclAppInit.c $(UNIX_DIR)/ldAix @DTRACE_SRC@; \
 	    do \
 	    $(INSTALL_DATA) $$i $(SCRIPT_INSTALL_DIR); \
 	    done;
-	@echo "Installing library http1.0 directory";
-	@for j in $(TOP_DIR)/library/http1.0/*.tcl ; \
-	    do \
-	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/http1.0; \
-	    done;
-	@echo "Installing library http2.5 directory";
-	@for j in $(TOP_DIR)/library/http/*.tcl ; \
-	    do \
-	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/http2.5; \
-	    done;
-	@echo "Installing library opt0.4 directory";
-	@for j in $(TOP_DIR)/library/opt/*.tcl ; \
-	    do \
-	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/opt0.4; \
-	    done;
-	@echo "Installing library msgcat1.3 directory";
-	@for j in $(TOP_DIR)/library/msgcat/*.tcl ; \
-	    do \
-	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/msgcat1.3; \
-	    done;
-	@echo "Installing library tcltest2.2 directory";
-	@for j in $(TOP_DIR)/library/tcltest/*.tcl ; \
-	    do \
-	    $(INSTALL_DATA) $$j $(SCRIPT_INSTALL_DIR)/tcltest2.2; \
-	    done;
-	@echo "Installing library encoding directory";
-	@for i in $(TOP_DIR)/library/encoding/*.enc ; do \
-		$(INSTALL_DATA) $$i $(SCRIPT_INSTALL_DIR)/encoding; \
-	done;
 
 install-doc: doc
 	@if test ! -x $(UNIX_DIR)/installManPage; then \

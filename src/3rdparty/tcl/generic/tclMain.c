@@ -17,7 +17,7 @@
 #include "tclInt.h"
 
 #define CLACKWISE_NAME "Clackwise"
-#define CLACKWISE_VERSION "0.1 (alpha)"
+#define CLACKWISE_VERSION "0.1.0 (alpha)"
 
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS DLLEXPORT

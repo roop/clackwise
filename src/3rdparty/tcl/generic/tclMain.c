@@ -211,11 +211,23 @@ Tcl_Main(argc, argv, appInitProc)
     Tcl_Interp *interp;
     Tcl_DString appName;
     Tcl_Obj *objPtr;
+	char cwInitTcl[255] = "";
+	FILE *cwInitTcl_fp;
 
     Tcl_FindExecutable(argv[0]);
 
     interp = Tcl_CreateInterp();
     Tcl_InitMemory(interp);
+
+    strcat(cwInitTcl, dirname(argv[0]));
+    strcat(cwInitTcl, "/lib/clackwise/init.tcl");
+    if (cwInitTcl_fp = fopen(cwInitTcl, "r")) {
+        fclose(cwInitTcl_fp);
+        TclSetStartupScriptFileName(cwInitTcl);
+    } else {
+        printf("Internal error: Cannot open initialization file %s. Exiting.\n", cwInitTcl);
+        goto done;
+    }
 
     /*
      * Make command-line arguments available in the Tcl variables "argc"
@@ -288,7 +300,6 @@ Tcl_Main(argc, argv, appInitProc)
 
     /*
      * If a script file was specified then just source that file
-     * and quit.
      */
 
     if (TclGetStartupScriptPath() != NULL) {
@@ -309,7 +320,6 @@ Tcl_Main(argc, argv, appInitProc)
 	    }
 	    exitCode = 1;
 	}
-	goto done;
     }
 
     /*

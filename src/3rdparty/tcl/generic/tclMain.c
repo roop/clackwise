@@ -16,6 +16,9 @@
 #include "tcl.h"
 #include "tclInt.h"
 
+#define CLACKWISE_NAME "Clackwise"
+#define CLACKWISE_VERSION "0.1 (alpha)"
+
 # undef TCL_STORAGE_CLASS
 # define TCL_STORAGE_CLASS DLLEXPORT
 
@@ -218,6 +221,12 @@ Tcl_Main(argc, argv, appInitProc)
 
     interp = Tcl_CreateInterp();
     Tcl_InitMemory(interp);
+#if defined(CLACKWISE_NAME) && defined(CLACKWISE_VERSION)
+    Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), CLACKWISE_NAME, sizeof(CLACKWISE_NAME));
+    Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), " ", 1);
+    Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), CLACKWISE_VERSION, sizeof(CLACKWISE_VERSION));
+    Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), "\n", 1);
+#endif
 
     strcat(cwInitTcl, dirname(argv[0]));
     strcat(cwInitTcl, "/lib/clackwise/init.tcl");

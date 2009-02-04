@@ -40,7 +40,8 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
   proc tclInit {} {\n\
     global tcl_libPath tcl_library errorInfo\n\
     global env tclDefaultLibrary\n\
-    rename tclInit {}\n\
+    global tcl_prompt1 tcl_prompt2\n\
+	rename tclInit {}\n\
     set errors {}\n\
     set dirs {}\n\
     if {[info exists tcl_library]} {\n\
@@ -55,7 +56,9 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
 	}\n\
         set dirs [concat $dirs $tcl_libPath]\n\
     }\n\
-    foreach i $dirs {\n\
+    set tcl_prompt1 \"echo -n \\\"cw_shell> \\\"\"\n\
+    set tcl_prompt2 \"echo -n \\\"   ?   \\\"\"\n\
+	foreach i $dirs {\n\
 	set tcl_library $i\n\
 	set tclfile [file join $i init.tcl]\n\
 	if {[file exists $tclfile]} {\n\

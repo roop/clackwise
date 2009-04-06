@@ -1,2 +1,3 @@
 - support read/write of gzippped .libs
 - perl bindings
+- Commands to write in Tcl: quit, alias

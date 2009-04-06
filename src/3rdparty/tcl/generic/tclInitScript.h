@@ -41,13 +41,14 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
     global tcl_libPath tcl_library errorInfo\n\
     global env tclDefaultLibrary\n\
     global tcl_prompt1 tcl_prompt2\n\
+    global clackwise_root_path\n\
 	rename tclInit {}\n\
     set errors {}\n\
     set dirs {}\n\
-	if {[info exists env(CLACKWISE_ROOT)]} {\n\
-	    lappend dirs $env(CLACKWISE_ROOT)/lib/tcl8.4\n\
+	if {[info exists clackwise_root_path]} {\n\
+	    lappend dirs ${clackwise_root_path}/lib/tcl8.4\n\
 	} else {\n\
-	    puts \"Internal error: CLACKWISE_ROOT not defined.\"\n\
+	    puts \"Internal error: clackwise_root_path not defined.\"\n\
 	}\n\
     if {[info exists tcl_library]} {\n\
 	lappend dirs $tcl_library\n\

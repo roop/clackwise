@@ -15,6 +15,7 @@
 
 #include "tcl.h"
 #include "tclInt.h"
+#include <unistd.h> /* for getcwd */
 
 #define CLACKWISE_NAME "Clackwise"
 #define CLACKWISE_VERSION "0.1.0 (alpha)"
@@ -176,6 +177,49 @@ CONST char *TclGetStartupScriptFileName()
     return Tcl_GetString(pathPtr);
 }
 
+char *getClackwiseRoot(char *appPath) {
+    char cwRoot[1024] = "";
+    int i, prevDirEllipseCount, dirTextStartPos, lastSlashPos;
+    dirTextStartPos = 0;
+    prevDirEllipseCount = 0;
+    for (i = 0; appPath[i] != 0; i++) {
+        if (appPath[i] == '.' && appPath[i+1] == '.' && appPath[i+2] == '/') {
+            prevDirEllipseCount++;
+            dirTextStartPos = i + 3;
+            i += 2;
+        }
+    }
+
+    if (appPath[0] == '/') {
+        strcpy(cwRoot, appPath + dirTextStartPos);
+    } else {
+        getcwd(cwRoot, 1024);
+        if (cwRoot[0] != '/') {
+            printf("Internal error: Cannot get current work directory. Exiting.\n");
+            return 0;
+        }
+        for (i = 0; cwRoot[i] != 0; i++) {}
+        for (i--; i > 0; i--) { // search backwards for slashes
+            if (prevDirEllipseCount <= 0) {
+                break;
+            }
+            if (cwRoot[i] == '/') {
+                prevDirEllipseCount--;
+                cwRoot[i] = 0;
+            }
+        }
+        strcat(cwRoot, "/");
+        strcat(cwRoot, appPath + dirTextStartPos);
+    }
+    lastSlashPos = 0; // the first char is always slash
+    for (i = 0; cwRoot[i] != 0; i++) {
+        if (cwRoot[i] == '/') {
+            lastSlashPos = i;
+        }
+    }
+    *(cwRoot + lastSlashPos) = 0;
+    return cwRoot;
+}
 
 
 /*
@@ -228,8 +272,11 @@ Tcl_Main(argc, argv, appInitProc)
     Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), "\n", 1);
 #endif
 
-    setenv("CLACKWISE_ROOT", dirname(argv[0]), 0 /* no overwriting */);
-    strcat(cwInitTcl, getenv("CLACKWISE_ROOT"));
+    char *cwRoot = getClackwiseRoot(argv[0]);
+    Tcl_DString cwRootDString;
+    Tcl_ExternalToUtfDString(NULL, cwRoot, -1, &cwRootDString);
+    Tcl_SetVar(interp, "clackwise_root_path", Tcl_DStringValue(&cwRootDString), TCL_GLOBAL_ONLY);
+    strcat(cwInitTcl, cwRoot);
     strcat(cwInitTcl, "/lib/clackwise/init.tcl");
     if (cwInitTcl_fp = fopen(cwInitTcl, "r")) {
         fclose(cwInitTcl_fp);

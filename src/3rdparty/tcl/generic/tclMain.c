@@ -519,8 +519,6 @@ Tcl_Main(argc, argv, appInitProc)
 
     if (!Tcl_InterpDeleted(interp)) {
         char buffer[TCL_INTEGER_SPACE + 5];
-        char *byemsg = "\nBye bye.\n";
-        Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), byemsg, strlen(byemsg));
         sprintf(buffer, "exit %d", exitCode);
         Tcl_Eval(interp, buffer);
 

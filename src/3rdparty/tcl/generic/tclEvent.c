@@ -573,6 +573,8 @@ Tcl_Exit(status)
     int status;			/* Exit status for application;  typically
 				 * 0 for normal return, 1 for error return. */
 {
+    char *byemsg = "\nBye bye.\n";
+    Tcl_WriteChars(Tcl_GetStdChannel(TCL_STDOUT), byemsg, strlen(byemsg));
     Tcl_Finalize();
     TclpExit(status);
 }

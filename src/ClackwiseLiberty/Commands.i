@@ -19,7 +19,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-%module clackwiselib
+%module clackwiseliberty
 %{
 #include "Commands.h"
 %}

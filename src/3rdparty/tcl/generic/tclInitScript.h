@@ -64,6 +64,9 @@ static char initScript[] = "if {[info proc tclInit]==\"\"} {\n\
     }\n\
     set tcl_prompt1 \"echo -n \\\"cw_shell> \\\"\"\n\
     set tcl_prompt2 \"echo -n \\\"   ?   \\\"\"\n\
+	namespace eval tclreadline {\n\
+		proc prompt1 \{\} \{ return \"cw_shell> \"; \}\n\
+	}\n\
 	foreach i $dirs {\n\
 	set tcl_library $i\n\
 	set tclfile [file join $i init.tcl]\n\

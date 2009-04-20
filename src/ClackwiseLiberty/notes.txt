@@ -1,0 +1,124 @@
+
+Example 1:
+----------
+
+cw_shell:
+
+read_lib something.lib
+  # Trove assumed to be /lib. reads into /lib/something.db.
+set p1 [get_lib_pin something.db/buf1/y]
+  # get a lib_pin
+set orig_maxcap [get_lib_attribute $p1 max_capacitance]
+  # query an attribute
+set_lib_attribute $p1 max_capacitance [expr $orig_maxcap * 2]
+  # modify an attribute
+write_lib [get_libs something.db] -out something.mod.lib
+  # write it out
+
+Perl:
+
+read_lib("something.db");
+my $p1 = get_lib_pin("something.db/buf1/y");
+my $orig_maxcap = $p1->get_lib_attribute("max_capacitance");
+$p1->set_lib_attribute("max_capacitance", $orig_maxcap * 2);
+get_libs("something.db")->write_lib("something.mod.lib");
+
+C++:
+
+CwDotLib *dl = read_lib("something.db");
+CwLibPin *p1 = get_lib_pin("something.db/buf1/y");
+double orig_maxcap = p1->get_lib_attribute("max_capacitance");
+p1->set_lib_attribute("max_capacitance", orig_maxcap * 2);
+get_libs("something.db")->write_lib("something.mod.lib");
+
+Example 2:
+---------
+
+cw_shell:
+
+set buf [get_lib_cell something.db/buf]
+  # take a cell out of one .lib
+create_lib -name another.db
+set bufbuf [create_lib_cell -name bufbuf -lib [get_libs another.db] -copy_of $buf]
+  # and insert it into another
+create_lib_pin -name a1 -lib_cell $bufbuf
+  # creates a new pin
+set_lib_attribute [get_lib_pin another.db/bufbuf/a1] input_capacitance 3
+  # sets an attribute on the new pin
+set y1pin [create_lib_pin -name y1 -lib_cell $bufbuf]
+set_lib_attribute y1pin max_capacitance 200
+  # create another pin
+set_lib_attribute y1pin related_pin a1
+set_lib_attribute y1pin function \"a1\"
+set_lib_attribute y1pin scalar 1 
+  # and create a new a1->y1 lib_arc
+write_lib [get_libs another.db] -out another.lib
+free_lib [get_libs another.db]
+
+Perl:
+
+my $buf = get_lib_cell("something.db/buf");
+my $lanother = create_lib("another.db");
+my $bufbuf = $lanother->create_lib_group("cell", "bufbuf");
+$bufbuf->initialize_from($buf);
+my $a1 = $bufbuf->create_lib_group("pin", "a1");
+$a1->set_lib_attribute("input_capacitance", 3);
+my $y1 = $bufbuf->create_lib_group("pin", "y1");
+$y1->set_lib_attribute("max_capacitance", 200);
+$y1->set_lib_attribute("related_pin", "a1");
+$y1->set_lib_attribute("function", "\"a1\"");
+$y1->set_lib_attribute("scalar", 1);
+$lanother->write_lib("another.lib");
+$lanother->free_lib();
+
+C++:
+
+CwLibCell *buf = get_lib_cell("something.db/buf");
+CwLib *lanother = create_lib("another.db");
+CwLibCell *bufbuf = lanother->create_lib_group("cell", "bufbuf");
+bufbuf->initialize_from(buf);
+  # copies all attributes from buf
+  # implicit-copies all lib_groups from buf
+CwLibPin *a1 = bufbuf->create_lib_group("pin", "a1");
+a1->set_lib_attribute("input_capacitance", 3);
+CwLibPin *y1 = bufbuf->create_lib_group("pin", "y1");
+y1->set_lib_attribute("max_capacitance", 200);
+y1->set_lib_attribute("related_pin", "a1");
+y1->set_lib_attribute("function", "\"a1\"");
+y1->set_lib_attribute("scalar", 1);
+lanother->write_lib("another.lib");
+lanother->free_lib(); // all libs will be freed at the end of the app, but can be freed earlier too
+
+Also possible: 
+-------------
+
+set newlib [create_lib -name somthingelse.db -copy_of [get_libs something.db]]
+
+rename_lib_cell $buf doublebuf
+
+'create_lib_pin -lib_cell $lc -name A' is equivalent to:
+  'create_lib_group -parent_group $lc -gread_lib something.lib
+
+get_attr [index_collection 0 [get_lib_pins -of [get_lib_cell my.db/andgate]]] full_name
+
+set aloha [create_lib -name aloha.db]
+set aloha_dup [create_lib -name aloha.db]; # Error saying there's already a lib by that name
+set_current_trove l2
+set aloha_dup [create_lib -name aloha.db]; # Succeeds
+set_current_trove -default
+set_lib_attr $aloha comment "aloha"
+set_lib_attr $aloha_dup comment "sloha_dup"
+get_lib_attr [get_libs aloha.db] comment; # returns aloha
+get_lib_attr [get_libs aloha.db -trove l2] comment; # returns aloha_dup
+
+remove_lib_attribute -name user_attr -lib_group $lc
+
+create_lib_define -lib_group $g -name n -type t
+
+remove_lib_define $lc user_attr_name
+
+remove_lib_pin -name A -lib_cell [get_lib_cell fortytwo.db/buf42 -trove backup]
+
+remove_lib_cell -name buf42 -lib [get_lib fortytwo.db -trove backup]
+
+

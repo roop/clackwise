@@ -62,9 +62,27 @@ void Troves::clear() {
 	m_libTroves.clear();
 }
 
-Troves::Troves() {
+Troves::Troves()
+    : m_currentTroveName(QString("lib")) {
 }
 
 Troves::~Troves() {
     clear();
 }
+
+void Troves::setCurrentTroveName(const QString& name) {
+    m_currentTroveName = name;
+}
+
+QString Troves::currentTroveName() const {
+    return m_currentTroveName;
+}
+
+LibTrove* Troves::currentLibTrove() {
+    return libTrove(currentTroveName());
+}
+
+QList<QString> Troves::availableTroveNames() const {
+    return m_libTroves.keys();
+}
+

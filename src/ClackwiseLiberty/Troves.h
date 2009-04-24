@@ -32,6 +32,10 @@ public:
     void setLibTrove(const QString &name, LibTrove* trove);
     void removeLibTrove(const QString &name);
     void clear();
+    void setCurrentTroveName(const QString& name);
+    QString currentTroveName() const;
+    QList<QString> availableTroveNames() const;
+    LibTrove* currentLibTrove();
 
 private:
     static Troves* s_instance;
@@ -39,5 +43,6 @@ private:
     ~Troves();
     QHash<QString, LibTrove*> m_libTroves;
     // QHash<QString, LibTrove*> m_modelTroves; // for future use
+    QString m_currentTroveName;
 };
 #endif

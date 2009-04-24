@@ -23,5 +23,12 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 %{
 #include "Commands.h"
 %}
+
+#ifdef SWIGTCL
+%rename(cw_read_lib) read_lib;
+%rename(cw_get_lib) get_lib;
+%rename(cw_write_lib) write_lib;
+#endif
+
 %include "Commands.h"
 

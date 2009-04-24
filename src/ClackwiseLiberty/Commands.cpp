@@ -25,22 +25,22 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "DotLib.h"
 #include "Troves.h"
 
-DotLib* _read_lib(const char *filename, const char *trove) {
+DotLib* read_lib(const char *filename, const char *trove) {
 	DotLib* dotlib = new DotLib(filename);
 	Troves::instance()->libTrove(trove)->store(dotlib->name(), dotlib);
 	return dotlib;
 }
 
-DotLib* _get_lib(const char *name, const char *trove) {
+DotLib* get_lib(const char *name, const char *trove) {
 	return Troves::instance()->libTrove(trove)->retrieve(name);
 }
 
-void _write_lib(DotLib *dotlib, const char* filename) {
+void write_lib(DotLib *dotlib, const char* filename) {
 	dotlib->write(filename);
 }
 
-void _write_lib(const char *name, const char *trove, const char* filename) {
-	DotLib *dl = _get_lib(name, trove);
+void write_lib(const char *name, const char *trove, const char* filename) {
+	DotLib *dl = get_lib(name, trove);
 	if (!dl) {
 		qDebug() << QString("Error: Library /%1/%2 not found").arg(trove).arg(name);
 		return;

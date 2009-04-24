@@ -24,9 +24,9 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DotLib.h"
 
-DotLib* _read_lib(const char *filename, const char *trove);
-DotLib* _get_lib(const char *name, const char *trove);
-void _write_lib(DotLib *dotlib, const char* filename);
-void _write_lib(const char *name, const char *trove, const char* filename);
+DotLib* read_lib(const char *filename, const char *trove);
+DotLib* get_lib(const char *name, const char *trove);
+void write_lib(DotLib *dotlib, const char* filename);
+void write_lib(const char *name, const char *trove, const char* filename);
 
 #endif

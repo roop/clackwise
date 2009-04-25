@@ -64,6 +64,7 @@ void Troves::clear() {
 
 Troves::Troves()
     : m_currentTroveName(QString("lib")) {
+    setLibTrove(currentTroveName(), new LibTrove(currentTroveName()));
 }
 
 Troves::~Troves() {

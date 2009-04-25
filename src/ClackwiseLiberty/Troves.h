@@ -24,6 +24,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LibTrove.h"
 
+namespace Clackwise {
+
 class Troves {
 public:
     static Troves* instance();
@@ -45,4 +47,6 @@ private:
     // QHash<QString, LibTrove*> m_modelTroves; // for future use
     QString m_currentTroveName;
 };
+
+}
 #endif

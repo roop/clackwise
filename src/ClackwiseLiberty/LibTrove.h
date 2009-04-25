@@ -27,6 +27,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DotLib.h"
 
+namespace Clackwise {
+
 class LibTrove {
 public:
 	LibTrove(const QString &troveName);
@@ -40,4 +42,6 @@ private:
 	QString const m_troveName;
 	QHash<QString, DotLib*> m_data;
 };
+
+}
 #endif

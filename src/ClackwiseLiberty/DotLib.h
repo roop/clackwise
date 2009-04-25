@@ -24,6 +24,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Liberty/LibGroup.h"
 
+namespace Clackwise {
+
 class DotLib
 	: public LibGroup
 {
@@ -35,4 +37,6 @@ public:
 	bool read(const QString& filename);
 	bool write(const QString& filename);
 };
+
+}
 #endif

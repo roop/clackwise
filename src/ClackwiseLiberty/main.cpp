@@ -2,6 +2,8 @@
 #include <QDebug>
 #include "Commands.h"
 
+using namespace Clackwise;
+
 int main(int argc, char *argv[])
 {
     DotLib* dl = read_lib(argv[1]);

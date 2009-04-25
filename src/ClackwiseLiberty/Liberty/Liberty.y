@@ -26,6 +26,9 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QVariantList>
 #include "Liberty/LibGroup.h"
+
+using namespace Clackwise;
+
 #define YYSTYPE QVariant
 #define YYDEBUG 1
 

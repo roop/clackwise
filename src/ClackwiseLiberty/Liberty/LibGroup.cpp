@@ -25,6 +25,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "Liberty/LibGroup.h"
 #include "Liberty/Liberty.h"
 
+namespace Clackwise {
+
 class LibGroup::Private
 {
 public:
@@ -288,5 +290,7 @@ QString LibGroup::toText(const QString &prefix) const
     }
     outStr += prefix + "}\n";
     return outStr;
+}
+
 }
 

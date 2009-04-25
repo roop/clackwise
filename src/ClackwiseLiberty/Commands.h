@@ -24,8 +24,11 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "DotLib.h"
 
+namespace Clackwise {
+
 DotLib* read_lib(const char *filename);
 DotLib* get_lib(const char *name);
 void write_lib(DotLib *dotlib, const char* filename);
 
+}
 #endif

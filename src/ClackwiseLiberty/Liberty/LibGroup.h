@@ -27,6 +27,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LIBGROUP_H
 #define LIBGROUP_H
 
+namespace Clackwise {
+
 class LibGroup
 {
 public:
@@ -121,6 +123,8 @@ protected:
     Private *d;
 };
 
-Q_DECLARE_METATYPE(LibGroup*)
+}
+
+Q_DECLARE_METATYPE(Clackwise::LibGroup*)
 
 #endif

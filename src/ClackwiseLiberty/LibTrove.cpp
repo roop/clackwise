@@ -21,6 +21,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "LibTrove.h"
 
+namespace Clackwise {
+
 LibTrove::LibTrove(const QString &troveName)
     : m_troveName(troveName) {
 }
@@ -56,3 +58,5 @@ LibTrove::~LibTrove() {
 	clear();
 }
 
+
+}

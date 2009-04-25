@@ -24,6 +24,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "Liberty/LibGroup.h"
 #include "Liberty/Liberty.h"
 
+namespace Clackwise {
+
 DotLib::DotLib(const QString& filename)
 {
 	if (!filename.isNull()) {
@@ -68,4 +70,6 @@ bool DotLib::write(const QString& filename)
 	}
 	dotlib.write(toText().toAscii().data());
 	return true;
+}
+
 }

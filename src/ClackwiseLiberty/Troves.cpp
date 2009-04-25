@@ -22,6 +22,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "Troves.h"
 #include "LibTrove.h"
 
+namespace Clackwise {
+
 Troves* Troves::s_instance = 0;
 
 Troves* Troves::instance() {
@@ -87,3 +89,5 @@ QList<QString> Troves::availableTroveNames() const {
     return m_libTroves.keys();
 }
 
+
+}

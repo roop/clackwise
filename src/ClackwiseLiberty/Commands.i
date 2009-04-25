@@ -22,6 +22,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 %module clackwiseliberty
 %{
 #include "Commands.h"
+using namespace Clackwise;
 %}
 
 #ifdef SWIGTCL

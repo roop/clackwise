@@ -25,6 +25,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "DotLib.h"
 #include "Troves.h"
 
+namespace Clackwise {
+
 DotLib* read_lib(const char *filename) {
 	DotLib* dotlib = new DotLib(filename);
 	Troves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
@@ -39,3 +41,4 @@ void write_lib(DotLib *dotlib, const char* filename) {
 	dotlib->write(filename);
 }
 
+}

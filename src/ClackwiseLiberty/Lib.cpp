@@ -19,24 +19,57 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef __DOTLIB_H
-#define __DOTLIB_H
-
+#include <QFile>
+#include "Lib.h"
 #include "Liberty/LibGroup.h"
+#include "Liberty/Liberty.h"
 
 namespace Clackwise {
 
-class DotLib
-	: public LibGroup
+Lib::Lib(const QString& filename)
 {
-public:
-	DotLib(const QString& filename=QString());
-	~DotLib();
-	DotLib(const DotLib &other);
-	DotLib& operator=(const DotLib & other);
-	bool read(const QString& filename);
-	bool write(const QString& filename);
-};
+	if (!filename.isNull()) {
+		read(filename);
+	}
+}
+
+Lib::~Lib()
+{
+}
+
+Lib::Lib(const Lib &other)
+        : LibGroup(other)
+{
+}
+
+Lib& Lib::operator=(const Lib & other)
+{
+	LibGroup::operator=(other);
+	return *this;
+}
+
+bool Lib::read(const QString& filename)
+{
+    LibGroup* lg = parseLiberty(filename);
+    if (lg == NULL) {
+        return false;
+    }
+    *this = * ((Lib*) lg);
+    delete lg;
+    return true;
+}
+
+bool Lib::write(const QString& filename)
+{
+	QFile dotlib(filename);
+	if (!dotlib.open(QIODevice::WriteOnly)) {
+		return false;
+	}
+	if (!d) {
+		return false;
+	}
+	dotlib.write(toText().toAscii().data());
+	return true;
+}
 
 }
-#endif

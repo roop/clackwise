@@ -25,12 +25,12 @@ QMAKE_EXTRA_COMPILERS += swig_tcl
 
 # Input
 HEADERS += Liberty/LibGroup.h \
-           DotLib.h \
+           Lib.h \
 		   LibTrove.h \
 		   Troves.h \
 		   Commands.h
 SOURCES += Liberty/LibGroup.cpp \
-           DotLib.cpp \
+           Lib.cpp \
 		   LibTrove.cpp \
 		   Troves.cpp \
 		   Commands.cpp \

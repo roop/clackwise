@@ -22,22 +22,22 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTextStream>
 #include <QDebug>
 #include "Commands.h"
-#include "DotLib.h"
+#include "Lib.h"
 #include "Troves.h"
 
 namespace Clackwise {
 
-DotLib* read_lib(const char *filename) {
-	DotLib* dotlib = new DotLib(filename);
+Lib* read_lib(const char *filename) {
+	Lib* dotlib = new Lib(filename);
 	Troves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
 	return dotlib;
 }
 
-DotLib* get_lib(const char *name) {
+Lib* get_lib(const char *name) {
 	return Troves::instance()->currentLibTrove()->retrieve(name);
 }
 
-void write_lib(DotLib *dotlib, const char* filename) {
+void write_lib(Lib *dotlib, const char* filename) {
 	dotlib->write(filename);
 }
 

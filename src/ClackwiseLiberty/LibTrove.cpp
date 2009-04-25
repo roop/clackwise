@@ -27,12 +27,12 @@ LibTrove::LibTrove(const QString &troveName)
     : m_troveName(troveName) {
 }
 
-void LibTrove::store(const QString &name, DotLib *dotlib) {
+void LibTrove::store(const QString &name, Lib *dotlib) {
 	remove(name);
     m_data[name] = dotlib;
 }
 
-DotLib* LibTrove::retrieve(const QString &name) const {
+Lib* LibTrove::retrieve(const QString &name) const {
     if (m_data.contains(name))
         return m_data.value(name);
     return 0;
@@ -46,7 +46,7 @@ void LibTrove::remove(const QString &name) {
 }
 
 void LibTrove::clear() {
-    QHashIterator<QString, DotLib*> i(m_data);
+    QHashIterator<QString, Lib*> i(m_data);
     while (i.hasNext()) {
         i.next();
         delete i.value();

@@ -25,7 +25,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __LIBTROVE_H
 #define __LIBTROVE_H
 
-#include "DotLib.h"
+#include "Lib.h"
 
 namespace Clackwise {
 
@@ -33,14 +33,14 @@ class LibTrove {
 public:
 	LibTrove(const QString &troveName);
 	~LibTrove();
-	void store(const QString &name, DotLib *dotlib);
-	DotLib* retrieve(const QString &name) const;
+	void store(const QString &name, Lib *dotlib);
+	Lib* retrieve(const QString &name) const;
 	void remove(const QString &name);
 	void clear();
 
 private:
 	QString const m_troveName;
-	QHash<QString, DotLib*> m_data;
+	QHash<QString, Lib*> m_data;
 };
 
 }

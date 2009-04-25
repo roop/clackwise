@@ -22,13 +22,13 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef __COMMANDS_H
 #define __COMMANDS_H
 
-#include "DotLib.h"
+#include "Lib.h"
 
 namespace Clackwise {
 
-DotLib* read_lib(const char *filename);
-DotLib* get_lib(const char *name);
-void write_lib(DotLib *dotlib, const char* filename);
+Lib* read_lib(const char *filename);
+Lib* get_lib(const char *name);
+void write_lib(Lib *dotlib, const char* filename);
 
 }
 #endif

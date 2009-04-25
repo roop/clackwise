@@ -1,3 +1,5 @@
 - support read/write of gzippped .libs
 - perl bindings
 - Commands to write in Tcl: quit, alias
+- Ctrl-C handler
+- Clear all libs in all troves on exiting

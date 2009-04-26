@@ -472,10 +472,14 @@ Tcl_Main(argc, argv, appInitProc)
 	    } else if (tty) {
 		resultPtr = Tcl_GetObjResult(interp);
 		Tcl_IncrRefCount(resultPtr);
-		Tcl_GetStringFromObj(resultPtr, &length);
+		char *resultStr = Tcl_GetStringFromObj(resultPtr, &length);
 		if ((length > 0) && outChannel) {
-		    Tcl_WriteObj(outChannel, resultPtr);
-		    Tcl_WriteChars(outChannel, "\n", 1);
+			if (resultStr[0] == '_' && strstr(resultStr, "_p_") != 0) { // if result is a clackwise object
+				// don't do anything for now
+			} else { // if result is a tcl object, print it out
+				Tcl_WriteObj(outChannel, resultPtr);
+				Tcl_WriteChars(outChannel, "\n", 1);
+			}
 		}
 		Tcl_DecrRefCount(resultPtr);
 	    }

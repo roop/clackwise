@@ -1,6 +1,6 @@
 /*
 
-Copyright (c) 2008, 2009 Roopesh Chander <roop@forwardbias.in>
+Copyright (c) 2009 Roopesh Chander <roop@forwardbias.in>
 
 This file is part of Clackwise. <http://clackwise.googlecode.com>
 
@@ -19,19 +19,23 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-%include "Typemaps.i"
-
-%module clackwiseliberty
-%{
-#include "Commands.h"
-using namespace Clackwise;
-%}
-
 #ifdef SWIGTCL
-%rename(cw_read_lib) read_lib;
-%rename(cw_get_lib) get_lib;
-%rename(cw_write_lib) write_lib;
+    %typemap(in) QString {
+        int strLength;
+        char *str = Tcl_GetStringFromObj($input, &strLength);
+        $1 = QString(str);
+    }
+    %typemap(in) QString *, QString & {
+        int strLength;
+        char *str = Tcl_GetStringFromObj($input, &strLength);
+        $1 = new QString(str);
+    }
+    %typemap(freearg) QString *, QString & {
+        delete $1;
+    }
+    %typemap(out) QString {
+        Tcl_SetResult(interp, ((char *) ($1).toAscii().data()), TCL_VOLATILE);
+    }
 #endif
 
-%include "Commands.h"
 

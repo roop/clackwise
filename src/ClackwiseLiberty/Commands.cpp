@@ -27,22 +27,22 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Clackwise {
 
-Lib* read_lib(const char *filename) {
+Lib* read_lib(const QString &filename) {
 	Lib* dotlib = new Lib(filename);
 	Troves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
 	return dotlib;
 }
 
-Lib* get_lib(const char *name) {
+Lib* get_lib(const QString &name) {
 	return Troves::instance()->currentLibTrove()->retrieve(name);
 }
 
-void write_lib(Lib *dotlib, const char* filename) {
+void write_lib(Lib *dotlib, const QString &filename) {
 	dotlib->write(filename);
 }
 
-char* object_to_string(Lib *dotlib) {
-	return dotlib->name().toAscii().data();
+QString object_to_string(Lib *dotlib) {
+	return dotlib->name();
 }
 
 }

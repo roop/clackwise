@@ -474,8 +474,10 @@ Tcl_Main(argc, argv, appInitProc)
 		Tcl_IncrRefCount(resultPtr);
 		char *resultStr = Tcl_GetStringFromObj(resultPtr, &length);
 		if ((length > 0) && outChannel) {
-			if (resultStr[0] == '_' && strstr(resultStr, "_p_") != 0) { // if result is a clackwise object
-				// don't do anything for now
+			if (resultStr[0] == '_' && strstr(resultStr, "_p_") != 0) { // if result is a clackwise object list
+				char *buffer = (char *) malloc((length + 50) * sizeof(char));
+				sprintf(buffer, "show_objects {%s}", resultStr);
+				Tcl_Eval(interp, buffer);
 			} else { // if result is a tcl object, print it out
 				Tcl_WriteObj(outChannel, resultPtr);
 				Tcl_WriteChars(outChannel, "\n", 1);

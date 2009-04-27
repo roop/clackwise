@@ -10,3 +10,25 @@ proc read_lib {filename} {
     set lib [cw_read_lib $filename]
     return $lib;
 }
+
+proc show_objects {collection} {
+	set i 0
+	set strlist {}
+	foreach cw_ptr $collection {
+		if {[regexp {^_.*_p_} $cw_ptr]} {
+			lappend strlist "\"[object_to_string $cw_ptr]\""
+		} else {
+			lappend strlist $cw_ptr
+		}
+		if {[incr i] > 10} {
+			break
+		}
+	}
+	puts -nonewline "{"
+	puts -nonewline [join $strlist ", "]
+	if {$i < [llength $collection]} {
+		puts -nonewline " ... "
+	}
+	puts "}"
+}
+

@@ -29,6 +29,7 @@ namespace Clackwise {
 Lib* read_lib(const char *filename);
 Lib* get_lib(const char *name);
 void write_lib(Lib *dotlib, const char* filename);
+char *object_to_string(Lib *dotlib);
 
 }
 #endif

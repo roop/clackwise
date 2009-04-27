@@ -41,4 +41,8 @@ void write_lib(Lib *dotlib, const char* filename) {
 	dotlib->write(filename);
 }
 
+char* object_to_string(Lib *dotlib) {
+	return dotlib->name().toAscii().data();
+}
+
 }

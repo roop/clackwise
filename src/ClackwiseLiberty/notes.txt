@@ -97,9 +97,23 @@ set newlib [create_lib -name somthingelse.db -copy_of [get_libs something.db]]
 rename_lib_cell $buf doublebuf
 
 'create_lib_pin -lib_cell $lc -name A' is equivalent to:
-  'create_lib_group -parent_group $lc -gread_lib something.lib
+  'create_lib_group -parent_group $lc -type pin -name A'
 
 get_attr [index_collection 0 [get_lib_pins -of [get_lib_cell my.db/andgate]]] full_name
+
+remove_lib_attribute -name user_attr -lib_group $lc
+
+create_lib_define -lib_group $g -name n -type t
+
+remove_lib_define $lc user_attr_name
+
+remove_lib_pin -name A -lib_cell [get_lib_cell fortytwo.db/buf42]
+
+remove_lib_cell -name buf42 -lib [get_lib fortytwo.db]
+
+
+Sometime in the future:
+----------------------
 
 set aloha [create_lib -name aloha.db]
 set aloha_dup [create_lib -name aloha.db]; # Error saying there's already a lib by that name
@@ -110,15 +124,4 @@ set_lib_attr $aloha comment "aloha"
 set_lib_attr $aloha_dup comment "sloha_dup"
 get_lib_attr [get_libs aloha.db] comment; # returns aloha
 get_lib_attr [get_libs aloha.db -trove l2] comment; # returns aloha_dup
-
-remove_lib_attribute -name user_attr -lib_group $lc
-
-create_lib_define -lib_group $g -name n -type t
-
-remove_lib_define $lc user_attr_name
-
-remove_lib_pin -name A -lib_cell [get_lib_cell fortytwo.db/buf42 -trove backup]
-
-remove_lib_cell -name buf42 -lib [get_lib fortytwo.db -trove backup]
-
 

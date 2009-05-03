@@ -24,9 +24,9 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariant>
 
 #define YYSTYPE QVariant
-#include "Liberty_yacc.h"
+#include "CwLiberty_yacc.h"
 
-extern "C" int Libertywrap() { return 1; }
+extern "C" int CwLibertywrap() { return 1; }
 
 %}
 %option yylineno
@@ -34,12 +34,12 @@ extern "C" int Libertywrap() { return 1; }
 \/\*([^\*]*|\*[^\/]*)\*\/      ; /*ignore comments*/
 \\[ \t]*\n                     ;
                                /* ignore continued-on-next-line-slashes */
-[a-zA-Z_][a-zA-Z0-9_]*                               Libertylval = QString(yytext); return KEYWORD;
-(\+|-)?[0-9]+                                        Libertylval = QString(yytext); return INTEGER;
-(\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     Libertylval = QString(yytext); return REAL;
-\"[^\"]*\"                                           Libertylval = QString(yytext); return QUOTED_STRING;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   Libertylval = QString(yytext); return ANY_WORD;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             Libertylval = QString(yytext); return ANY_WORD;
+[a-zA-Z_][a-zA-Z0-9_]*                               CwLibertylval = QString(yytext); return KEYWORD;
+(\+|-)?[0-9]+                                        CwLibertylval = QString(yytext); return INTEGER;
+(\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     CwLibertylval = QString(yytext); return REAL;
+\"[^\"]*\"                                           CwLibertylval = QString(yytext); return QUOTED_STRING;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   CwLibertylval = QString(yytext); return ANY_WORD;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             CwLibertylval = QString(yytext); return ANY_WORD;
 \n                             ;
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */

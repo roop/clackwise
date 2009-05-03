@@ -17,26 +17,26 @@ CONFIG += debug
 # Swig
 swig_tcl.name = Creating Tcl interface using Swig
 swig_tcl.input = SWIG_INTERFACES
-swig_tcl.depends = Commands.h
+swig_tcl.depends = CwCommands.h
 swig_tcl.output = $${OBJECTS_DIR}/${QMAKE_FILE_BASE}_tcl_wrap.cpp
 swig_tcl.commands = swig -c++ -tcl8 -o $${OBJECTS_DIR}/${QMAKE_FILE_BASE}_tcl_wrap.cpp ${QMAKE_FILE_IN} 
 swig_tcl.variable_out = GENERATED_SOURCES
 QMAKE_EXTRA_COMPILERS += swig_tcl
 
 # Input
-HEADERS += Liberty/LibGroup.h \
-           Lib.h \
-		   LibTrove.h \
-		   Troves.h \
-		   Commands.h
-SOURCES += Liberty/LibGroup.cpp \
-           Lib.cpp \
-		   LibTrove.cpp \
-		   Troves.cpp \
-		   Commands.cpp \
+HEADERS += Liberty/CwLibGroup.h \
+           CwLib.h \
+		   CwLibTrove.h \
+		   CwTroves.h \
+		   CwCommands.h
+SOURCES += Liberty/CwLibGroup.cpp \
+           CwLib.cpp \
+		   CwLibTrove.cpp \
+		   CwTroves.cpp \
+		   CwCommands.cpp \
            main.cpp
-SWIG_INTERFACES += Commands.i
+SWIG_INTERFACES += CwCommands.i
 
-LEXSOURCES += Liberty/Liberty.l
-YACCSOURCES += Liberty/Liberty.y
+LEXSOURCES += Liberty/CwLiberty.l
+YACCSOURCES += Liberty/CwLiberty.y
 

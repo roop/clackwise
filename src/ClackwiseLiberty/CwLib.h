@@ -19,44 +19,24 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include "LibTrove.h"
+#ifndef __DOTLIB_H
+#define __DOTLIB_H
+
+#include "Liberty/CwLibGroup.h"
 
 namespace Clackwise {
 
-LibTrove::LibTrove(const QString &troveName)
-    : m_troveName(troveName) {
-}
-
-void LibTrove::store(const QString &name, Lib *dotlib) {
-	remove(name);
-    m_data[name] = dotlib;
-}
-
-Lib* LibTrove::retrieve(const QString &name) const {
-    if (m_data.contains(name))
-        return m_data.value(name);
-    return 0;
-}
-
-void LibTrove::remove(const QString &name) {
-    if (m_data.contains(name)) {
-        delete m_data.value(name);
-        m_data.remove(name);
-	}
-}
-
-void LibTrove::clear() {
-    QHashIterator<QString, Lib*> i(m_data);
-    while (i.hasNext()) {
-        i.next();
-        delete i.value();
-    }
-	m_data.clear();
-}
-
-LibTrove::~LibTrove() {
-	clear();
-}
-
+class CwLib
+	: public CwLibGroup
+{
+public:
+	CwLib(const QString& filename=QString());
+	~CwLib();
+	CwLib(const CwLib &other);
+	CwLib& operator=(const CwLib & other);
+	bool read(const QString& filename);
+	bool write(const QString& filename);
+};
 
 }
+#endif

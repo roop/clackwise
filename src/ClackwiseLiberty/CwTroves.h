@@ -19,30 +19,34 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include <QTextStream>
-#include <QDebug>
-#include "Commands.h"
-#include "Lib.h"
-#include "Troves.h"
+#ifndef __TROVES_H
+#define __TROVES_H
+
+#include "CwLibTrove.h"
 
 namespace Clackwise {
 
-Lib* read_lib(const QString &filename) {
-	Lib* dotlib = new Lib(filename);
-	Troves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
-	return dotlib;
-}
+class CwTroves {
+public:
+    static CwTroves* instance();
+    static void destroy();
+    CwLibTrove* libTrove(const QString &name);
+    void setLibTrove(const QString &name, CwLibTrove* trove);
+    void removeLibTrove(const QString &name);
+    void clear();
+    void setCurrentTroveName(const QString& name);
+    QString currentTroveName() const;
+    QList<QString> availableTroveNames() const;
+    CwLibTrove* currentLibTrove();
 
-Lib* get_lib(const QString &name) {
-	return Troves::instance()->currentLibTrove()->retrieve(name);
-}
-
-void write_lib(Lib *dotlib, const QString &filename) {
-	dotlib->write(filename);
-}
-
-QString object_to_string(Lib *dotlib) {
-	return dotlib->name();
-}
+private:
+    static CwTroves* s_instance;
+    CwTroves();
+    ~CwTroves();
+    QHash<QString, CwLibTrove*> m_libTroves;
+    // QHash<QString, CwLibTrove*> m_modelTroves; // for future use
+    QString m_currentTroveName;
+};
 
 }
+#endif

@@ -19,44 +19,44 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#include "Troves.h"
-#include "LibTrove.h"
+#include "CwTroves.h"
+#include "CwLibTrove.h"
 
 namespace Clackwise {
 
-Troves* Troves::s_instance = 0;
+CwTroves* CwTroves::s_instance = 0;
 
-Troves* Troves::instance() {
+CwTroves* CwTroves::instance() {
     if (s_instance == 0)
-        s_instance = new Troves();
+        s_instance = new CwTroves();
     return s_instance;
 }
 
-void Troves::destroy() {
+void CwTroves::destroy() {
     delete s_instance;
     s_instance = 0;
 }
 
-LibTrove* Troves::libTrove(const QString &name) {
+CwLibTrove* CwTroves::libTrove(const QString &name) {
     if (!m_libTroves.contains(name))
-        setLibTrove(name, new LibTrove(name));
+        setLibTrove(name, new CwLibTrove(name));
     return m_libTroves.value(name);
 }
 
-void Troves::setLibTrove(const QString &name, LibTrove* trove) {
+void CwTroves::setLibTrove(const QString &name, CwLibTrove* trove) {
     removeLibTrove(name);
     m_libTroves[name] = trove;
 }
 
-void Troves::removeLibTrove(const QString &name) {
+void CwTroves::removeLibTrove(const QString &name) {
     if (m_libTroves.contains(name)) {
         delete m_libTroves.value(name);
         m_libTroves.remove(name);
 	}
 }
 
-void Troves::clear() {
-    QHashIterator<QString, LibTrove*> il(m_libTroves);
+void CwTroves::clear() {
+    QHashIterator<QString, CwLibTrove*> il(m_libTroves);
     while (il.hasNext()) {
         il.next();
         delete il.value();
@@ -64,28 +64,28 @@ void Troves::clear() {
 	m_libTroves.clear();
 }
 
-Troves::Troves()
+CwTroves::CwTroves()
     : m_currentTroveName(QString("lib")) {
-    setLibTrove(currentTroveName(), new LibTrove(currentTroveName()));
+    setLibTrove(currentTroveName(), new CwLibTrove(currentTroveName()));
 }
 
-Troves::~Troves() {
+CwTroves::~CwTroves() {
     clear();
 }
 
-void Troves::setCurrentTroveName(const QString& name) {
+void CwTroves::setCurrentTroveName(const QString& name) {
     m_currentTroveName = name;
 }
 
-QString Troves::currentTroveName() const {
+QString CwTroves::currentTroveName() const {
     return m_currentTroveName;
 }
 
-LibTrove* Troves::currentLibTrove() {
+CwLibTrove* CwTroves::currentLibTrove() {
     return libTrove(currentTroveName());
 }
 
-QList<QString> Troves::availableTroveNames() const {
+QList<QString> CwTroves::availableTroveNames() const {
     return m_libTroves.keys();
 }
 

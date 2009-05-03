@@ -29,7 +29,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Clackwise {
 
-class LibGroup
+class CwLibGroup
 {
 public:
     enum LibAttributeValueType {
@@ -41,10 +41,10 @@ public:
         Group
     };
 
-    LibGroup(QString type = "", QString name = "");
-    ~LibGroup();
-    LibGroup(const LibGroup &other);
-    LibGroup& operator=(const LibGroup &other);
+    CwLibGroup(QString type = "", QString name = "");
+    ~CwLibGroup();
+    CwLibGroup(const CwLibGroup &other);
+    CwLibGroup& operator=(const CwLibGroup &other);
 
     // type, like bus in bus(w[1])
     void setType(QString type);
@@ -54,11 +54,11 @@ public:
     void setName(QString name);
     QString name() const;
 
-    void insertSubgroup(int position, LibGroup *lg);
-    void addSubgroup(LibGroup *lg);
-    void replaceSubgroup(int position, LibGroup *lg);
+    void insertSubgroup(int position, CwLibGroup *lg);
+    void addSubgroup(CwLibGroup *lg);
+    void replaceSubgroup(int position, CwLibGroup *lg);
     void removeSubgroupAt(int position);
-    const LibGroup* subgroupAt(int position) const;
+    const CwLibGroup* subgroupAt(int position) const;
     void clearSubgroups();
 
     // set a simple attribute
@@ -125,6 +125,6 @@ protected:
 
 }
 
-Q_DECLARE_METATYPE(Clackwise::LibGroup*)
+Q_DECLARE_METATYPE(Clackwise::CwLibGroup*)
 
 #endif

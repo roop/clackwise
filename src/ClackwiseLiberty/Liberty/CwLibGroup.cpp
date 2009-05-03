@@ -22,12 +22,12 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QDebug>
 
-#include "Liberty/LibGroup.h"
-#include "Liberty/Liberty.h"
+#include "Liberty/CwLibGroup.h"
+#include "Liberty/CwLiberty.h"
 
 namespace Clackwise {
 
-class LibGroup::Private
+class CwLibGroup::Private
 {
 public:
     Private(QString type, QString name)
@@ -45,24 +45,24 @@ public:
     QMultiMap<QString, QVariant> m_attributes;
 
     // store subgroups
-    QList<LibGroup*> m_subgroups;
+    QList<CwLibGroup*> m_subgroups;
 
     // reference count for implicit sharing
     int refCount;
 };
 
-LibGroup::LibGroup(QString type, QString name)
+CwLibGroup::CwLibGroup(QString type, QString name)
         : d(new Private(type, name))
 {
 }
 
-LibGroup::LibGroup(const LibGroup &other)
+CwLibGroup::CwLibGroup(const CwLibGroup &other)
         : d(other.d)
 {
     ref();
 }
 
-LibGroup& LibGroup::operator=(const LibGroup & other)
+CwLibGroup& CwLibGroup::operator=(const CwLibGroup & other)
 {
     if (this != &other) {
         deref();
@@ -72,19 +72,19 @@ LibGroup& LibGroup::operator=(const LibGroup & other)
     return *this;
 }
 
-LibGroup::~LibGroup()
+CwLibGroup::~CwLibGroup()
 {
     deref();
 }
 
-void LibGroup::ref()
+void CwLibGroup::ref()
 {
     Q_ASSERT(d);
     Q_ASSERT(d->refCount);
     d->refCount++;
 }
 
-void LibGroup::deref()
+void CwLibGroup::deref()
 {
     Q_ASSERT(d);
     Q_ASSERT(d->refCount);
@@ -95,7 +95,7 @@ void LibGroup::deref()
     }
 }
 
-void LibGroup::copyOnWrite()
+void CwLibGroup::copyOnWrite()
 {
     if (d->refCount > 1) {
         deref();
@@ -106,75 +106,75 @@ void LibGroup::copyOnWrite()
     }
 }
 
-void LibGroup::setType(QString type)
+void CwLibGroup::setType(QString type)
 {
     copyOnWrite();
     d->m_type = type;
 }
 
-QString LibGroup::type() const
+QString CwLibGroup::type() const
 {
     return d->m_type;
 }
 
-void LibGroup::setName(QString name)
+void CwLibGroup::setName(QString name)
 {
     copyOnWrite();
     d->m_name = name;
 }
 
-QString LibGroup::name() const
+QString CwLibGroup::name() const
 {
     return d->m_name;
 }
 
-void LibGroup::insertSubgroup(int position, LibGroup *lg)
+void CwLibGroup::insertSubgroup(int position, CwLibGroup *lg)
 {
     copyOnWrite();
     d->m_subgroups.insert(position, lg);
 }
 
-void LibGroup::addSubgroup(LibGroup *lg)
+void CwLibGroup::addSubgroup(CwLibGroup *lg)
 {
     insertSubgroup(subgroupsCount(), lg);
 }
 
-void LibGroup::replaceSubgroup(int position, LibGroup *lg)
+void CwLibGroup::replaceSubgroup(int position, CwLibGroup *lg)
 {
     copyOnWrite();
     d->m_subgroups[position] = lg;
 }
 
-void LibGroup::removeSubgroupAt(int position)
+void CwLibGroup::removeSubgroupAt(int position)
 {
     copyOnWrite();
     d->m_subgroups.removeAt(position);
 }
 
-void LibGroup::clearSubgroups()
+void CwLibGroup::clearSubgroups()
 {
     copyOnWrite();
     d->m_subgroups.clear();
 }
 
-const LibGroup* LibGroup::subgroupAt(int position) const
+const CwLibGroup* CwLibGroup::subgroupAt(int position) const
 {
     return d->m_subgroups.at(position);
 }
 
-void LibGroup::setSimpleAttribute(QString name, QString value)
+void CwLibGroup::setSimpleAttribute(QString name, QString value)
 {
     copyOnWrite();
     d->m_attributes.replace(name, value);
 }
 
-void LibGroup::setComplexAttribute(QString name, QStringList value)
+void CwLibGroup::setComplexAttribute(QString name, QStringList value)
 {
     copyOnWrite();
     d->m_attributes.replace(name, value);
 }
 
-void LibGroup::setComplexAttribute(QString name, QString value1,
+void CwLibGroup::setComplexAttribute(QString name, QString value1,
                                    QString value2,
                                    QString value3,
                                    QString value4,
@@ -193,13 +193,13 @@ void LibGroup::setComplexAttribute(QString name, QString value1,
     setComplexAttribute(name, valueList);
 }
 
-void LibGroup::setMultivaluedAttribute(QString name, QStringList value)
+void CwLibGroup::setMultivaluedAttribute(QString name, QStringList value)
 {
     copyOnWrite();
     d->m_attributes.insert(name, value);
 }
 
-void LibGroup::setMultivaluedAttribute(QString name, QString value1,
+void CwLibGroup::setMultivaluedAttribute(QString name, QString value1,
                                        QString value2,
                                        QString value3,
                                        QString value4,
@@ -218,19 +218,19 @@ void LibGroup::setMultivaluedAttribute(QString name, QString value1,
     setMultivaluedAttribute(name, valueList);
 }
 
-void LibGroup::removeAttribute(QString name)
+void CwLibGroup::removeAttribute(QString name)
 {
     copyOnWrite();
     d->m_attributes.remove(name);
 }
 
-void LibGroup::removeAttribute(QString name, QVariant value)
+void CwLibGroup::removeAttribute(QString name, QVariant value)
 {
     copyOnWrite();
     d->m_attributes.remove(name, value);
 }
 
-QVariant LibGroup::attributeValue(QString name) const
+QVariant CwLibGroup::attributeValue(QString name) const
 {
     QVariantList values = d->m_attributes.values(name);
     if (values.size() == 1) {
@@ -239,28 +239,28 @@ QVariant LibGroup::attributeValue(QString name) const
     return values;
 }
 
-void LibGroup::clearAttributes()
+void CwLibGroup::clearAttributes()
 {
     copyOnWrite();
     d->m_attributes.clear();
 }
 
-QStringList LibGroup::attributes() const
+QStringList CwLibGroup::attributes() const
 {
     return d->m_attributes.uniqueKeys();
 }
 
-int LibGroup::subgroupsCount() const
+int CwLibGroup::subgroupsCount() const
 {
     return d->m_subgroups.size();
 }
 
-int LibGroup::attributesCount() const
+int CwLibGroup::attributesCount() const
 {
     return d->m_attributes.size();
 }
 
-QString LibGroup::toText(const QString &prefix) const
+QString CwLibGroup::toText(const QString &prefix) const
 {
     QString outStr("");
     outStr += prefix + type() +  "(" + name() + ") {\n";

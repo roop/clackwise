@@ -25,52 +25,52 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPair>
 #include <QStringList>
 #include <QVariantList>
-#include "Liberty/LibGroup.h"
+#include "Liberty/CwLibGroup.h"
 
 using namespace Clackwise;
 
 #define YYSTYPE QVariant
 #define YYDEBUG 1
 
-int Libertylex();  
-int Libertyparse(QVariant& ret);
-extern int Libertydebug;
-extern FILE* Libertyin;
-extern int Libertylineno;
+int CwLibertylex();  
+int CwLibertyparse(QVariant& ret);
+extern int CwLibertydebug;
+extern FILE* CwLibertyin;
+extern int CwLibertylineno;
 QString libertyFilename = "";
 static bool parseErrorRecoveryTriggered;
 
-LibGroup* parseLiberty(const QString &filename) {
-    Libertydebug = 0;
+CwLibGroup* parseLiberty(const QString &filename) {
+    CwLibertydebug = 0;
 
     libertyFilename = filename;
     parseErrorRecoveryTriggered = false;
 
-    Libertyin = fopen(filename.toAscii().data(), "r");
-    if (Libertyin == NULL) {
+    CwLibertyin = fopen(filename.toAscii().data(), "r");
+    if (CwLibertyin == NULL) {
       qDebug() << "Error: Can't open lib file " << filename << " for reading" << endl;
       return NULL;
     }
     QVariant result;
     // cwlib_yyparse(p);
-    // if (p.type() == typeid(LibGroup*))
-    //     return any_cast<LibGroup*>(p);
+    // if (p.type() == typeid(CwLibGroup*))
+    //     return any_cast<CwLibGroup*>(p);
     // else
     //     return NULL;
-	if (Libertyparse(result) != 0 || parseErrorRecoveryTriggered) {
+	if (CwLibertyparse(result) != 0 || parseErrorRecoveryTriggered) {
 		return NULL;
 	}
-    fclose(Libertyin);
+    fclose(CwLibertyin);
 
     libertyFilename = "";
     parseErrorRecoveryTriggered = false;
 
-	return result.value<LibGroup*>();
+	return result.value<CwLibGroup*>();
 }
 
-void Libertyerror(QVariant& ret, const char *str) {
+void CwLibertyerror(QVariant& ret, const char *str) {
     parseErrorRecoveryTriggered = true;
-    qDebug() << QString("Error: %1 at line %2 of library file %3\n").arg(str).arg(Libertylineno).arg(libertyFilename);
+    qDebug() << QString("Error: %1 at line %2 of library file %3\n").arg(str).arg(CwLibertylineno).arg(libertyFilename);
 }
  
   
@@ -96,23 +96,23 @@ value:
         INTEGER | REAL | KEYWORD | QUOTED_STRING | ANY_WORD ;
 */
 
-everything :         // of Type LibGroup*
+everything :         // of Type CwLibGroup*
          libgroup
          {
            ret = $1;
          };
 
-libgroup :           // of type LibGroup*
+libgroup :           // of type CwLibGroup*
          libgrouphead libgrouptail
          {
 		 	$$ = $1;
-			if ($$.value<LibGroup*>() != NULL) {
-				LibGroup *lg = $$.value<LibGroup*>();
+			if ($$.value<CwLibGroup*>() != NULL) {
+				CwLibGroup *lg = $$.value<CwLibGroup*>();
 				QVariantList statements = $2.value<QVariantList>();
 				for (int i = 0; i < statements.count(); i++) {
 					QVariant statement = statements.at(i);
-					if (statement.value<LibGroup*>() != 0) { // lib group
-						lg->addSubgroup(statement.value<LibGroup*>());
+					if (statement.value<CwLibGroup*>() != 0) { // lib group
+						lg->addSubgroup(statement.value<CwLibGroup*>());
 					} else if (statement.toList().size() > 2) { // attribute
 						QVariantList attrStatement = statement.toList();
 						QString variableName = attrStatement.at(1).toString();
@@ -128,33 +128,33 @@ libgroup :           // of type LibGroup*
 			}
          }
 
-libgrouphead :       // of type LibGroup*
+libgrouphead :       // of type CwLibGroup*
 	     variable '(' value_list ')'
          {
 		 	$$ = QVariant();
 			if ($3.toStringList().size() == 0) {
-				$$.setValue<LibGroup*>(new LibGroup($1.toString()));
+				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
 			} else if ($3.toStringList().size() == 1) {
-				$$.setValue<LibGroup*>(new LibGroup($1.toString(), $3.toStringList().at(0)));
+				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().at(0)));
 			} else {
-				Libertyerror($$, "Expecting one or zero names for lib group, but got more");
+				CwLibertyerror($$, "Expecting one or zero names for lib group, but got more");
 				YYERROR;
 			}
          }
        | variable '(' error ')'
          {
 		 	$$ = QVariant();
-			$$.setValue<LibGroup*>(new LibGroup($1.toString()));
+			$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
          }
        | error '(' value_list ')'
          {
 		 	$$ = QVariant();
-			$$.setValue<LibGroup*>(new LibGroup());
+			$$.setValue<CwLibGroup*>(new CwLibGroup());
          }
        | error '(' error ')'
          {
 		 	$$ = QVariant();
-			$$.setValue<LibGroup*>(new LibGroup());
+			$$.setValue<CwLibGroup*>(new CwLibGroup());
          };
 
 libgrouptail :       // of type QVariantList
@@ -216,7 +216,7 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << Libertylineno
+					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
 				}
 			} else {
@@ -231,7 +231,7 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << Libertylineno
+					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
 				}
 			} else {

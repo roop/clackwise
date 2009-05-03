@@ -19,24 +19,30 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef __DOTLIB_H
-#define __DOTLIB_H
-
-#include "Liberty/LibGroup.h"
+#include <QTextStream>
+#include <QDebug>
+#include "CwCommands.h"
+#include "CwLib.h"
+#include "CwTroves.h"
 
 namespace Clackwise {
 
-class Lib
-	: public LibGroup
-{
-public:
-	Lib(const QString& filename=QString());
-	~Lib();
-	Lib(const Lib &other);
-	Lib& operator=(const Lib & other);
-	bool read(const QString& filename);
-	bool write(const QString& filename);
-};
+CwLib* read_lib(const QString &filename) {
+	CwLib* dotlib = new CwLib(filename);
+	CwTroves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
+	return dotlib;
+}
+
+CwLib* get_lib(const QString &name) {
+	return CwTroves::instance()->currentLibTrove()->retrieve(name);
+}
+
+void write_lib(CwLib *dotlib, const QString &filename) {
+	dotlib->write(filename);
+}
+
+QString object_to_string(CwLib *dotlib) {
+	return dotlib->name();
+}
 
 }
-#endif

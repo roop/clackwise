@@ -19,34 +19,44 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
-#ifndef __TROVES_H
-#define __TROVES_H
-
-#include "LibTrove.h"
+#include "CwLibTrove.h"
 
 namespace Clackwise {
 
-class Troves {
-public:
-    static Troves* instance();
-    static void destroy();
-    LibTrove* libTrove(const QString &name);
-    void setLibTrove(const QString &name, LibTrove* trove);
-    void removeLibTrove(const QString &name);
-    void clear();
-    void setCurrentTroveName(const QString& name);
-    QString currentTroveName() const;
-    QList<QString> availableTroveNames() const;
-    LibTrove* currentLibTrove();
+CwLibTrove::CwLibTrove(const QString &troveName)
+    : m_troveName(troveName) {
+}
 
-private:
-    static Troves* s_instance;
-    Troves();
-    ~Troves();
-    QHash<QString, LibTrove*> m_libTroves;
-    // QHash<QString, LibTrove*> m_modelTroves; // for future use
-    QString m_currentTroveName;
-};
+void CwLibTrove::store(const QString &name, CwLib *dotlib) {
+	remove(name);
+    m_data[name] = dotlib;
+}
+
+CwLib* CwLibTrove::retrieve(const QString &name) const {
+    if (m_data.contains(name))
+        return m_data.value(name);
+    return 0;
+}
+
+void CwLibTrove::remove(const QString &name) {
+    if (m_data.contains(name)) {
+        delete m_data.value(name);
+        m_data.remove(name);
+	}
+}
+
+void CwLibTrove::clear() {
+    QHashIterator<QString, CwLib*> i(m_data);
+    while (i.hasNext()) {
+        i.next();
+        delete i.value();
+    }
+	m_data.clear();
+}
+
+CwLibTrove::~CwLibTrove() {
+	clear();
+}
+
 
 }
-#endif

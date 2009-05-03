@@ -22,10 +22,10 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef LIBERTY_H
 #define LIBERTY_H
 
-#include "Liberty/LibGroup.h"
+#include "Liberty/CwLibGroup.h"
 using namespace Clackwise;
 
-LibGroup* parseLiberty(const QString &filename);
+CwLibGroup* parseLiberty(const QString &filename);
 
 #endif
 

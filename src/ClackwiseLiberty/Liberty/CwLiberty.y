@@ -117,11 +117,11 @@ libgroup :           // of type CwLibGroup*
 						QVariantList attrStatement = statement.toList();
 						QString variableName = attrStatement.at(1).toString();
 						if (attrStatement.at(0).toString() == "simple_attribute") {
-							lg->setSimpleAttribute(variableName, attrStatement.at(2).toString());
+							lg->setSimpleAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toString());
 						} else if (attrStatement.at(0).toString() == "complex_attribute") {
-							lg->setComplexAttribute(variableName, attrStatement.at(2).toStringList());
+							lg->setComplexAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
 						} else if (attrStatement.at(0).toString() == "multivalued_attribute") {
-							lg->setMultivaluedAttribute(variableName, attrStatement.at(2).toStringList());
+							lg->setMultivaluedAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
 						}
 					}
 				}

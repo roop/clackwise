@@ -42,7 +42,8 @@ public:
     // store simple and complex attributes
     // if the value is a list, it's a complex attribute. (like capacitive_load_unit(1,pf); )
     // else a simple attribute. (like voltage_unit: 1mV; )
-    QMultiMap<QString, QVariant> m_attributes;
+    QMultiMap<QString, QVariant> m_libAttributes;
+    QMultiMap<QString, QVariant> m_userAttributes;
 
     // store subgroups
     QList<CwLibGroup*> m_subgroups;
@@ -100,7 +101,8 @@ void CwLibGroup::copyOnWrite()
     if (d->refCount > 1) {
         deref();
         Private *new_d = new Private(type(), name());
-        new_d->m_attributes = d->m_attributes;
+        new_d->m_libAttributes = d->m_libAttributes;
+        new_d->m_userAttributes = d->m_userAttributes;
         new_d->m_subgroups = d->m_subgroups;
         d = new_d;
     }
@@ -162,19 +164,37 @@ const CwLibGroup* CwLibGroup::subgroupAt(int position) const
     return d->m_subgroups.at(position);
 }
 
-void CwLibGroup::setSimpleAttribute(QString name, QString value)
+void CwLibGroup::setSimpleAttribute(AttributeType type, QString name, QString value)
 {
     copyOnWrite();
-    d->m_attributes.replace(name, value);
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.replace(name, value);
+            break;
+        case UserAttribute:
+            d->m_userAttributes.replace(name, value);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-void CwLibGroup::setComplexAttribute(QString name, QStringList value)
+void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QStringList value)
 {
     copyOnWrite();
-    d->m_attributes.replace(name, value);
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.replace(name, value);
+            break;
+        case UserAttribute:
+            d->m_userAttributes.replace(name, value);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-void CwLibGroup::setComplexAttribute(QString name, QString value1,
+void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QString value1,
                                    QString value2,
                                    QString value3,
                                    QString value4,
@@ -190,16 +210,25 @@ void CwLibGroup::setComplexAttribute(QString name, QString value1,
         valueList.append(value4);
     if (!value5.isNull())
         valueList.append(value5);
-    setComplexAttribute(name, valueList);
+    setComplexAttribute(type, name, valueList);
 }
 
-void CwLibGroup::setMultivaluedAttribute(QString name, QStringList value)
+void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QStringList value)
 {
     copyOnWrite();
-    d->m_attributes.insert(name, value);
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.insert(name, value);
+            break;
+        case UserAttribute:
+            d->m_userAttributes.insert(name, value);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-void CwLibGroup::setMultivaluedAttribute(QString name, QString value1,
+void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QString value1,
                                        QString value2,
                                        QString value3,
                                        QString value4,
@@ -215,39 +244,86 @@ void CwLibGroup::setMultivaluedAttribute(QString name, QString value1,
         valueList.append(value4);
     if (!value5.isNull())
         valueList.append(value5);
-    setMultivaluedAttribute(name, valueList);
+    setMultivaluedAttribute(type, name, valueList);
 }
 
-void CwLibGroup::removeAttribute(QString name)
+void CwLibGroup::removeAttribute(AttributeType type, QString name)
 {
     copyOnWrite();
-    d->m_attributes.remove(name);
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.remove(name);
+            break;
+        case UserAttribute:
+            d->m_userAttributes.remove(name);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-void CwLibGroup::removeAttribute(QString name, QVariant value)
+void CwLibGroup::removeAttribute(AttributeType type, QString name, QVariant value)
 {
     copyOnWrite();
-    d->m_attributes.remove(name, value);
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.remove(name, value);
+            break;
+        case UserAttribute:
+            d->m_userAttributes.remove(name, value);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-QVariant CwLibGroup::attributeValue(QString name) const
+QVariant CwLibGroup::attributeValue(AttributeType type, QString name) const
 {
-    QVariantList values = d->m_attributes.values(name);
+    QVariantList values;
+    switch (type) {
+        case LibAttribute:
+            values = d->m_libAttributes.values(name);
+            break;
+        case UserAttribute:
+            values = d->m_userAttributes.values(name);
+            break;
+        default:
+            Q_ASSERT(0);
+    };
     if (values.size() == 1) {
         return values.at(0);
     }
     return values;
 }
 
-void CwLibGroup::clearAttributes()
+void CwLibGroup::clearAttributes(AttributeType type)
 {
     copyOnWrite();
-    d->m_attributes.clear();
+    switch (type) {
+        case LibAttribute:
+            d->m_libAttributes.clear();
+            break;
+        case UserAttribute:
+            d->m_userAttributes.clear();
+            break;
+        default:
+            Q_ASSERT(0);
+    };
 }
 
-QStringList CwLibGroup::attributes() const
+QStringList CwLibGroup::attributes(AttributeType type) const
 {
-    return d->m_attributes.uniqueKeys();
+    switch (type) {
+        case LibAttribute:
+            return d->m_libAttributes.uniqueKeys();
+            break;
+        case UserAttribute:
+            return d->m_userAttributes.uniqueKeys();
+            break;
+        default:
+            Q_ASSERT(0);
+    };
+    return QStringList();
 }
 
 int CwLibGroup::subgroupsCount() const
@@ -255,18 +331,28 @@ int CwLibGroup::subgroupsCount() const
     return d->m_subgroups.size();
 }
 
-int CwLibGroup::attributesCount() const
+int CwLibGroup::attributesCount(AttributeType type) const
 {
-    return d->m_attributes.size();
+    switch (type) {
+        case LibAttribute:
+            return d->m_libAttributes.size();
+            break;
+        case UserAttribute:
+            return d->m_userAttributes.size();
+            break;
+        default:
+            Q_ASSERT(0);
+    };
+    return 0;
 }
 
 QString CwLibGroup::toText(const QString &prefix) const
 {
     QString outStr("");
     outStr += prefix + type() +  "(" + name() + ") {\n";
-    QStringList attrs = attributes();
+    QStringList attrs = attributes(LibAttribute);
     for (int i = 0; i < attrs.size(); i++) {
-        QVariant val = attributeValue(attrs[i]);
+        QVariant val = attributeValue(LibAttribute, attrs[i]);
         QVariantList multiVals;
         switch (val.type()) {
         case QMetaType::QString: // simple attribute

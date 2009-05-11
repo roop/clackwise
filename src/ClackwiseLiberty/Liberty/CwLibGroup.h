@@ -32,6 +32,12 @@ namespace Clackwise {
 class CwLibGroup
 {
 public:
+
+    enum AttributeType {
+        LibAttribute,
+        UserAttribute
+    };
+
     enum LibAttributeValueType {
         Invalid = -1,
         Boolean = 0,
@@ -63,12 +69,12 @@ public:
 
     // set a simple attribute
     // any existing attribute of the same name will be replaced
-    void setSimpleAttribute(QString name, QString value);
+    void setSimpleAttribute(AttributeType type, QString name, QString value);
 
     // set a complex attribute
     // any existing attribute of the same name will be replaced
-    void setComplexAttribute(QString name, QStringList value);
-    void setComplexAttribute(QString name, QString value1,
+    void setComplexAttribute(AttributeType type, QString name, QStringList value);
+    void setComplexAttribute(AttributeType type, QString name, QString value1,
                              QString value2 = QString(),
                              QString value3 = QString(),
                              QString value4 = QString(),
@@ -78,39 +84,39 @@ public:
     // all existing attributes of the same name will be kept
     // this is to support attributes like define, define_group,
     // which can occur multiple times legally
-    void setMultivaluedAttribute(QString name, QStringList value);
-    void setMultivaluedAttribute(QString name, QString value1,
+    void setMultivaluedAttribute(AttributeType type, QString name, QStringList value);
+    void setMultivaluedAttribute(AttributeType type, QString name, QString value1,
                                  QString value2 = QString(),
                                  QString value3 = QString(),
                                  QString value4 = QString(),
                                  QString value5 = QString());
 
     // remove an attribute
-    void removeAttribute(QString name);
+    void removeAttribute(AttributeType type, QString name);
 
     // remove a particular value of an attribute
     // removes the attribute only if the value is as specified
     // this is more relevant for multivalued attributes
-    void removeAttribute(QString name, QVariant value);
+    void removeAttribute(AttributeType type, QString name, QVariant value);
 
     // get the value of an attribute
     // the attribute type can be derived from the return type
     // QString => simple attribute
     // QList<QString> => complex attribute
     // QList<QList<QString> > => multivalued complex attribute
-    QVariant attributeValue(QString name) const;
+    QVariant attributeValue(AttributeType type, QString name) const;
 
     // remove all attributes
-    void clearAttributes();
+    void clearAttributes(AttributeType type);
 
     // return a list of all attributes
-    QStringList attributes() const;
+    QStringList attributes(AttributeType type) const;
 
     int subgroupsCount() const;
-    int attributesCount() const;
-    int simpleAttributesCount() const;
-    int complexAttributesCount() const;
-    int multivaluedAttributesCount() const;
+    int attributesCount(AttributeType type) const;
+    int simpleAttributesCount(AttributeType type) const;
+    int complexAttributesCount(AttributeType type) const;
+    int multivaluedAttributesCount(AttributeType type) const;
 
     QString toText(const QString& prefix = QString("")) const;
 

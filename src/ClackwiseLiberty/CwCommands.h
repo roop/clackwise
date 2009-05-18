@@ -18,6 +18,8 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
 
+#include <QRegExp>
+
 #ifndef __COMMANDS_H
 #define __COMMANDS_H
 
@@ -26,7 +28,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 namespace Clackwise {
 
 CwLib* cw_read_lib(const QString &filename);
-CwLib* cw_get_lib(const QString &name);
+QList<CwLib*> cw_get_libs(const QString &pattern, int patternSyntax);
 void write_lib(CwLib *dotlib, const QString &filename);
 QString object_to_string(CwLib *dotlib);
 

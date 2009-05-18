@@ -21,6 +21,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 #include <QHash>
+#include <QRegExp>
 
 #ifndef __LIBTROVE_H
 #define __LIBTROVE_H
@@ -35,6 +36,7 @@ public:
 	~CwLibTrove();
 	void store(const QString &name, CwLib *dotlib);
 	CwLib* retrieve(const QString &name) const;
+    QList<CwLib*> retrieve(const QString &pattern, QRegExp::PatternSyntax patternSyntax) const;
 	void remove(const QString &name);
 	void clear();
 

@@ -38,6 +38,20 @@ CwLib* CwLibTrove::retrieve(const QString &name) const {
     return 0;
 }
 
+
+QList<CwLib*> CwLibTrove::retrieve(const QString &pattern, QRegExp::PatternSyntax patternSyntax) const {
+    QList<CwLib*> ret;
+    QRegExp regexp(pattern, Qt::CaseSensitive, patternSyntax);
+    QHash<QString, CwLib*>::const_iterator i = m_data.constBegin();
+    while (i != m_data.constEnd()) {
+        if (regexp.indexIn(i.key()) >= 0) {
+            ret << i.value();
+        }
+        ++i;
+    }
+    return ret;
+}
+
 void CwLibTrove::remove(const QString &name) {
     if (m_data.contains(name)) {
         delete m_data.value(name);

@@ -26,7 +26,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 namespace Clackwise {
 
 CwLib* read_lib(const QString &filename);
-CwLib* get_lib(const QString &name);
+CwLib* cw_get_lib(const QString &name);
 void write_lib(CwLib *dotlib, const QString &filename);
 QString object_to_string(CwLib *dotlib);
 

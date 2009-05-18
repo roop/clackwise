@@ -33,7 +33,7 @@ CwLib* read_lib(const QString &filename) {
 	return dotlib;
 }
 
-CwLib* get_lib(const QString &name) {
+CwLib* cw_get_lib(const QString &name) {
 	return CwTroves::instance()->currentLibTrove()->retrieve(name);
 }
 

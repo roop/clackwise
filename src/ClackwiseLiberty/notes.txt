@@ -1,4 +1,15 @@
 
+'get_lib_pins */buf*/a*' will do
+  -> set p {}
+     foreach l [cw_get_libs *] {
+       foreach c [cw_get_lib_groups $l cell buf* 0] {
+		   lappend p [cw_get_lib_groups $c pin a* 0]
+		}
+	 }
+     return p;
+
+All commands support [0] --wildcard (default) / [1] --regexp / [2] --exact
+
 Example 1:
 ----------
 

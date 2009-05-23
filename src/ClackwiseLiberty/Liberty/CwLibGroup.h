@@ -23,6 +23,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVariant>
 #include <QList>
 #include <QTextStream>
+#include <QStringList>
 
 #ifndef LIBGROUP_H
 #define LIBGROUP_H
@@ -128,6 +129,8 @@ protected:
 
 }
 
+#ifndef SWIG
 Q_DECLARE_METATYPE(Clackwise::CwLibGroup*)
+#endif
 
 #endif

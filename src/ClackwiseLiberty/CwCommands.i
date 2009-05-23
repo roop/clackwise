@@ -24,8 +24,12 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 %module clackwiseliberty
 %{
 #include "CwCommands.h"
+#include "Liberty/CwLibGroup.h"
+#include "CwLib.h"
 using namespace Clackwise;
 %}
 
 %include "CwCommands.h"
+%include "Liberty/CwLibGroup.h"
+%include "CwLib.h"
 

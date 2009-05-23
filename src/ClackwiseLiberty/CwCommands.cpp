@@ -42,8 +42,8 @@ void write_lib(CwLib *dotlib, const QString &filename) {
 	dotlib->write(filename);
 }
 
-QString object_to_string(CwLib *dotlib) {
-	return dotlib->name();
+QString object_to_string(CwLibGroup *libgroup) {
+	return libgroup->name();
 }
 
 }

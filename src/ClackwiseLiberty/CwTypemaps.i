@@ -18,7 +18,6 @@ You should have received a copy of the GNU Lesser General Public License
 version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 */
-
 #ifdef SWIGTCL
     %typemap(in) QString {
         int strLength;
@@ -35,6 +34,14 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
     }
     %typemap(out) QString {
         Tcl_SetResult(interp, ((char *) ($1).toAscii().data()), TCL_VOLATILE);
+    }
+    %typemap(out) QList<CwLib*> {
+        Tcl_Obj *listObj = Tcl_NewListObj(0, 0);
+        for (int i = 0; i < ($1).size(); i++) {
+            Tcl_Obj *elemObj = SWIG_NewInstanceObj(SWIG_as_voidptr(($1).at(i)), SWIGTYPE_p_CwLib,0);
+            Tcl_ListObjAppendElement(interp, listObj, elemObj);
+        }
+        Tcl_SetObjResult(interp, listObj);
     }
 #endif
 

@@ -42,10 +42,10 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
         Tcl_SetResult(interp, ((char *) ($1).toAscii().data()), TCL_VOLATILE);
     }
     %typemap(typecheck) QString = char *;
-    %typemap(out) QList<CwLib*> {
+    %typemap(out) QList<Clackwise::CwLib*> {
         Tcl_Obj *listObj = Tcl_NewListObj(0, 0);
         for (int i = 0; i < ($1).size(); i++) {
-            Tcl_Obj *elemObj = SWIG_NewInstanceObj(SWIG_as_voidptr(($1).at(i)), SWIGTYPE_p_CwLib,0);
+            Tcl_Obj *elemObj = SWIG_NewInstanceObj(SWIG_as_voidptr(($1).at(i)), SWIGTYPE_p_Clackwise__CwLib,0);
             Tcl_ListObjAppendElement(interp, listObj, elemObj);
         }
         Tcl_SetObjResult(interp, listObj);

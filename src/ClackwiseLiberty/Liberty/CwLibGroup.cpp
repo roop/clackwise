@@ -164,13 +164,31 @@ const CwLibGroup* CwLibGroup::subgroupAt(int position) const
     return d->m_subgroups.at(position);
 }
 
-QList<CwLibGroup*> CwLibGroup::subgroupByName(const QString &type, const QString &pattern, int patternSyntax) const {
+QList<CwLibGroup*> CwLibGroup::subgroupsByName(const QString &type, const QString &pattern, int patternSyntax) const {
     QList<CwLibGroup*> ret;
     QRegExp regexp(pattern, Qt::CaseSensitive, QRegExp::PatternSyntax(patternSyntax));
     foreach(CwLibGroup *subgroup, d->m_subgroups) {
         if (subgroup->type() == type && regexp.indexIn(subgroup->name()) >= 0) {
             ret << subgroup;
         }
+    }
+    return ret;
+}
+
+QList<CwLibGroup*> CwLibGroup::subgroupsBySequence(const QString &typeSequence, const QString &pattern, int patternSyntax) const {
+    int t = typeSequence.indexOf('/');
+    QString typeThis = typeSequence.mid(0, t);
+    QString typeMore = (t >= 0)? typeSequence.mid(t + 1) : "";
+    int p = pattern.indexOf('/');
+    QString patternThis = pattern.mid(0, p);
+    QString patternMore = (p >= 0)? pattern.mid(p + 1) : "";
+    QList<CwLibGroup*> subgroups = subgroupsByName(typeThis, patternThis, patternSyntax);
+    if (typeMore.isEmpty()) {
+        return subgroups;
+    }
+    QList<CwLibGroup*> ret;
+    foreach (CwLibGroup* g, subgroups) {
+        ret << g->subgroupsBySequence(typeMore, patternMore, patternSyntax);
     }
     return ret;
 }

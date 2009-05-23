@@ -47,7 +47,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
         Tcl_Obj *listObj = Tcl_NewListObj(0, 0);
         QList<Clackwise::CwLib*> l = QList<Clackwise::CwLib*>($1);
         for (int i = 0; i < l.size(); i++) {
-            Tcl_Obj *elemObj = SWIG_NewInstanceObj(SWIG_as_voidptr(l.at(i)), SWIGTYPE_p_Clackwise__CwLib,0);
+            Tcl_Obj *elemObj = SWIG_NewInstanceObj(SWIG_as_voidptr(l.at(i)), $descriptor(Clackwise::CwLib*),0);
             Tcl_ListObjAppendElement(interp, listObj, elemObj);
         }
         Tcl_SetObjResult(interp, listObj);

@@ -1,4 +1,4 @@
-library(test.db) {
+library(bus.db) {
   technology(cmos);
   delay_model : table_lookup;
 

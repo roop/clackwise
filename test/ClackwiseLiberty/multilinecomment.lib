@@ -1,4 +1,4 @@
-library(test.db) {
+library(mlc.db) {
 /* Multiline comments can put the
    line number tracking mechanism off.
    So hence this testcase */

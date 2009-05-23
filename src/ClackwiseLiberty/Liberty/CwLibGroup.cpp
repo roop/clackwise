@@ -164,6 +164,17 @@ const CwLibGroup* CwLibGroup::subgroupAt(int position) const
     return d->m_subgroups.at(position);
 }
 
+QList<CwLibGroup*> CwLibGroup::subgroupByName(const QString &type, const QString &pattern, int patternSyntax) const {
+    QList<CwLibGroup*> ret;
+    QRegExp regexp(pattern, Qt::CaseSensitive, QRegExp::PatternSyntax(patternSyntax));
+    foreach(CwLibGroup *subgroup, d->m_subgroups) {
+        if (subgroup->type() == type && regexp.indexIn(subgroup->name()) >= 0) {
+            ret << subgroup;
+        }
+    }
+    return ret;
+}
+
 void CwLibGroup::setSimpleAttribute(AttributeType type, QString name, QString value)
 {
     copyOnWrite();

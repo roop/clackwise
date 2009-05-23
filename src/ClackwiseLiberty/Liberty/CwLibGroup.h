@@ -66,6 +66,7 @@ public:
     void replaceSubgroup(int position, CwLibGroup *lg);
     void removeSubgroupAt(int position);
     const CwLibGroup* subgroupAt(int position) const;
+    QList<CwLibGroup*> subgroupByName(const QString &type, const QString &pattern, int patternSyntax) const;
     void clearSubgroups();
 
     // set a simple attribute

@@ -114,9 +114,6 @@ public:
 
     int subgroupsCount() const;
     int attributesCount(AttributeType type) const;
-    int simpleAttributesCount(AttributeType type) const;
-    int complexAttributesCount(AttributeType type) const;
-    int multivaluedAttributesCount(AttributeType type) const;
 
     QString toText(const QString& prefix = QString("")) const;
 

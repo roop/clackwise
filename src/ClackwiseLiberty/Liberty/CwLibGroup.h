@@ -53,6 +53,8 @@ public:
     CwLibGroup(const CwLibGroup &other);
     CwLibGroup& operator=(const CwLibGroup &other);
 
+    QList<CwLibGroup*> parents() const;
+
     // type, like bus in bus(w[1])
     void setType(QString type);
     QString type() const;
@@ -124,6 +126,8 @@ protected:
     void ref();
     void deref();
     void copyOnWrite();
+    bool addParent(CwLibGroup *parent);
+    bool removeParent(CwLibGroup *parent);
 
     class Private;
     Private *d;

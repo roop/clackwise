@@ -48,6 +48,9 @@ public:
     // store subgroups
     QList<CwLibGroup*> m_subgroups;
 
+    // the same private object can be used in multiple parents, hence a list of parents
+    QList<CwLibGroup*> m_parents;
+
     // reference count for implicit sharing
     int refCount;
 };
@@ -73,6 +76,22 @@ CwLibGroup& CwLibGroup::operator=(const CwLibGroup & other)
     return *this;
 }
 
+QList<CwLibGroup*> CwLibGroup::parents() const {
+    return d->m_parents;
+}
+
+bool CwLibGroup::addParent(CwLibGroup *parent) {
+    if (!d->m_parents.contains(parent)) {
+        d->m_parents.append(parent);
+        return true;
+    }
+    return false;
+}
+
+bool CwLibGroup::removeParent(CwLibGroup *parent) {
+    return d->m_parents.removeOne(parent);
+}
+
 CwLibGroup::~CwLibGroup()
 {
     deref();
@@ -83,6 +102,9 @@ void CwLibGroup::ref()
     Q_ASSERT(d);
     Q_ASSERT(d->refCount);
     d->refCount++;
+    foreach(CwLibGroup *g, d->m_subgroups) {
+        g->addParent(this);
+    }
 }
 
 void CwLibGroup::deref()
@@ -90,6 +112,9 @@ void CwLibGroup::deref()
     Q_ASSERT(d);
     Q_ASSERT(d->refCount);
     d->refCount--;
+    foreach(CwLibGroup *g, d->m_subgroups) {
+        g->removeParent(this);
+    }
     if (d->refCount == 0) {
         delete d;
         d = 0;
@@ -104,6 +129,7 @@ void CwLibGroup::copyOnWrite()
         new_d->m_libAttributes = d->m_libAttributes;
         new_d->m_userAttributes = d->m_userAttributes;
         new_d->m_subgroups = d->m_subgroups;
+        new_d->m_parents << this;
         d = new_d;
     }
 }
@@ -134,6 +160,7 @@ void CwLibGroup::insertSubgroup(int position, CwLibGroup *lg)
 {
     copyOnWrite();
     d->m_subgroups.insert(position, lg);
+    lg->addParent(this);
 }
 
 void CwLibGroup::addSubgroup(CwLibGroup *lg)

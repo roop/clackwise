@@ -43,7 +43,7 @@ void write_lib(CwLib *dotlib, const QString &filename) {
 }
 
 QString object_to_string(CwLibGroup *libgroup) {
-	return libgroup->name();
+    return libgroup->fullName();
 }
 
 }

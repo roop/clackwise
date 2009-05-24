@@ -27,9 +27,22 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include "Liberty/CwLibGroup.h"
 #include "CwLib.h"
 using namespace Clackwise;
+enum QRegExp_patternSyntax {
+    QRegExp_RegExp = QRegExp::RegExp,
+    QRegExp_RegExp2 = QRegExp::RegExp2,
+    QRegExp_Wildcard = QRegExp::Wildcard,
+    QRegExp_FixedString = QRegExp::FixedString
+};
 %}
 
 %include "CwCommands.h"
 %include "Liberty/CwLibGroup.h"
 %include "CwLib.h"
+
+enum QRegExp_patternSyntax {
+    QRegExp_RegExp = QRegExp::RegExp,
+    QRegExp_RegExp2 = QRegExp::RegExp2,
+    QRegExp_Wildcard = QRegExp::Wildcard,
+    QRegExp_FixedString = QRegExp::FixedString
+};
 

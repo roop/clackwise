@@ -62,6 +62,7 @@ public:
     // name, like w[1] in bus(w[1])
     void setName(QString name);
     QString name() const;
+    QString fullName() const;
 
     void insertSubgroup(int position, CwLibGroup *lg);
     void addSubgroup(CwLibGroup *lg);

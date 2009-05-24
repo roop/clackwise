@@ -156,6 +156,15 @@ QString CwLibGroup::name() const
     return d->m_name;
 }
 
+QString CwLibGroup::fullName() const {
+    if (parents().count() > 0) {
+        if (!name().isEmpty()) {
+            return parents().at(0)->fullName() + "/" + name();
+        }
+    }
+    return name();
+}
+
 void CwLibGroup::insertSubgroup(int position, CwLibGroup *lg)
 {
     copyOnWrite();

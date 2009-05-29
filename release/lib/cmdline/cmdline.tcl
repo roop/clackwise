@@ -123,13 +123,21 @@ proc ::cmdline::getKnownOpt {argvVar optstring optVar valVar} {
 
 	    "-*" {
 		set option [string range $arg 1 end]
-
-		if {[lsearch -exact $optstring $option] != -1} {
+		set bool_arg [lsearch -regexp -all $optstring "^$option\[^\.\]*\$"]
+		set arg_arg [lsearch -regexp -all $optstring "^$option.*\.arg\$"]
+		if {[expr [llength $bool_arg] + [llength $arg_arg]] > 1} {
+		    set value "Option \"-$option\" is ambiguous"
+		    set result -3
+		} else {
+		if {[llength $bool_arg] > 0} {
 		    # Booleans are set to 1 when present
+			set option [lindex $optstring [lindex $bool_arg 0]]
 		    set value 1
 		    set result 1
 		    set argsList [lrange $argsList 1 end]
-		} elseif {[lsearch -exact $optstring "$option.arg"] != -1} {
+		} elseif {[llength $arg_arg] > 0} {
+			set option [lindex $optstring [lindex $arg_arg 0]]
+			set option [string range $option 0 [expr [string length $option] - 5]] ;# remove '.arg'
 		    set result 1
 		    set argsList [lrange $argsList 1 end]
 		    if {[llength $argsList] != 0} {
@@ -143,6 +151,7 @@ proc ::cmdline::getKnownOpt {argvVar optstring optVar valVar} {
 		    # Unknown option.
 		    set value "Illegal option \"-$option\""
 		    set result -1
+		}
 		}
 	    }
 	    default {

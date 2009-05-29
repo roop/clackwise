@@ -192,6 +192,7 @@ proc ::cmdline::getoptions {arglistVar optlist {usage options:}} {
 	set err [getopt argv $opts opt arg]
 	if {$err < 0} {
             set result(?) ""
+			error "Error: $::argv0: $arg"
             break
 	}
 	if {$err == 0} {

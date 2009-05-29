@@ -306,7 +306,7 @@ proc ::cmdline::getKnownOptions {arglistVar optlist {usage options:}} {
 proc ::cmdline::GetOptionDefaults {optlist defaultArrayVar} {
     upvar 1 $defaultArrayVar result
 
-    set opts {? help}
+    set opts {help}
     foreach opt $optlist {
 	set name [lindex $opt 0]
 	if {[regsub -- .secret$ $name {} name] == 1} {
@@ -342,7 +342,7 @@ proc ::cmdline::GetOptionDefaults {optlist defaultArrayVar} {
 proc ::cmdline::usage {optlist {usage {options:}}} {
     set str "Usage: [getArgv0] $usage\n"
     foreach opt [concat $optlist \
-	    {{help "Print this message"} {? "Print this message"}}] {
+	    {{help "Print this message"}}] {
 	set name [lindex $opt 0]
 	if {[regsub -- .secret$ $name {} name] == 1} {
 	    # Hidden option

@@ -340,7 +340,7 @@ proc ::cmdline::GetOptionDefaults {optlist defaultArrayVar} {
 #	A formatted usage message
 
 proc ::cmdline::usage {optlist {usage {options:}}} {
-    set str "[getArgv0] $usage\n"
+    set str "Usage: [getArgv0] $usage\n"
     foreach opt [concat $optlist \
 	    {{help "Print this message"} {? "Print this message"}}] {
 	set name [lindex $opt 0]

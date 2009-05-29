@@ -8,6 +8,7 @@
 # Copyright (c) 1998-2000 by Ajuba Solutions.
 # Copyright (c) 2001-2006 by Andreas Kupries <andreas_kupries@users.sf.net>.
 # Copyright (c) 2003      by David N. Welton  <davidw@dedasys.com>
+# Copyright (c) 2009      by Roopesh Chander  <roop@forwardbias.in>
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 # 
@@ -145,7 +146,9 @@ proc ::cmdline::getKnownOpt {argvVar optstring optVar valVar} {
 		}
 	    }
 	    default {
-		# Skip ahead
+			set option $arg
+		    set value 1
+		    set argsList [lrange $argsList 1 end]
 	    }
 	}
     }
@@ -185,13 +188,17 @@ proc ::cmdline::getoptions {arglistVar optlist {usage options:}} {
 
     set opts [GetOptionDefaults $optlist result]
 
-    set argc [llength $argv]
-    while {[set err [getopt argv $opts opt arg]]} {
+    while {[llength $argv] > 0} {
+	set err [getopt argv $opts opt arg]
 	if {$err < 0} {
             set result(?) ""
             break
 	}
-	set result($opt) $arg
+	if {$err == 0} {
+			lappend result(__NON_SWITCH_ARGS__) $opt
+	} else {
+			set result($opt) $arg
+	}
     }
     if {[info exist result(?)] || [info exists result(help)]} {
 	error [usage $optlist $usage]

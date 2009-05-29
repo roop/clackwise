@@ -144,7 +144,7 @@ proc ::cmdline::getKnownOpt {argvVar optstring optVar valVar} {
 			set value [lindex $argsList 0]
 			set argsList [lrange $argsList 1 end]
 		    } else {
-			set value "Option \"$option\" requires an argument"
+			set value "Option \"-$option\" requires an argument"
 			set result -2
 		    }
 		} else {

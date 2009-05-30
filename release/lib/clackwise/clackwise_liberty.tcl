@@ -94,10 +94,10 @@ proc help {args} {
 
 set ::clackwise_commands(get_libs) {
 	{Get libs from memory}
-	{pattern1 [pattern2 ...]}
+	{pattern}
 	{
-		{regexp "Match patterns as regular expressions"}
-		{exact "Match patterns as exact strings"}
+		{regexp "Match pattern as regular expression"}
+		{exact "Match pattern as exact string"}
 	}
 }
 proc get_libs {args} {
@@ -113,13 +113,15 @@ proc get_libs {args} {
 		set QRegExp_Type $::QRegExp_FixedString
 	}
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
-		array set ret {}
-		foreach pattern $params(__NON_SWITCH_ARGS__) {
-			foreach result [cw_get_libs $pattern $QRegExp_Type] {
-				array set ret "$result 1"
-			}
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
+		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
+		if {$paramcount == 1} {
+			return [cw_get_libs $pattern $QRegExp_Type]
+		} elseif {$paramcount == 2} {
+			error "Error: That's one pattern too many than what I can handle"
+		} else {
+			error "Error: That's [expr $paramcount - 1] patterns too many than what I can handle"
 		}
-		return [array names ret];
 	} else {
 		error "Error: $::argv0: No patterns specified";
 		return {};

@@ -1,38 +1,4 @@
 
-set ::clackwise_commands(read_lib) {
-	{Read a .lib file into memory}
-	{filename}
-	{
-	}
-}
-proc read_lib {args} {
-	set ::argv0 "read_lib"
-	set summary [lindex $::clackwise_commands($::argv0) 0]
-	set usage [lindex $::clackwise_commands($::argv0) 1]
-	set options [lindex $::clackwise_commands($::argv0) 2]
-	array set params [::cmdline::getoptions args $options "$usage # $summary"]
-	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
-		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
-		set filename [lindex $params(__NON_SWITCH_ARGS__) 0]
-		if {$paramcount == 1} {
-			if {![file isfile $filename]} {
-				error "Error: No such file - $filename";
-				return;
-			}
-			set lib [cw_read_lib $filename]
-			if {[CwLibGroup_name $lib] == ""} {
-				return ""
-			}
-			return $lib
-		} elseif {$paramcount == 2} {
-			error "Error: That's one file too many than what I can handle"
-		} else {
-			error "Error: That's [expr $paramcount - 1] files too many than what I can handle"
-		}
-	}
-	return "";
-}
-
 proc show_objects {collection} {
 	set i 0
 	set strlist {}
@@ -90,6 +56,40 @@ proc help {args} {
 	} else {
 		puts "Try 'help *'"; #TODO: Print help for commonly used commands
 	}
+}
+
+set ::clackwise_commands(read_lib) {
+	{Read a .lib file into memory}
+	{filename}
+	{
+	}
+}
+proc read_lib {args} {
+	set ::argv0 "read_lib"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
+		set filename [lindex $params(__NON_SWITCH_ARGS__) 0]
+		if {$paramcount == 1} {
+			if {![file isfile $filename]} {
+				error "Error: No such file - $filename";
+				return;
+			}
+			set lib [cw_read_lib $filename]
+			if {[CwLibGroup_name $lib] == ""} {
+				return ""
+			}
+			return $lib
+		} elseif {$paramcount == 2} {
+			error "Error: That's one file too many than what I can handle"
+		} else {
+			error "Error: That's [expr $paramcount - 1] files too many than what I can handle"
+		}
+	}
+	return "";
 }
 
 set ::clackwise_commands(get_libs) {

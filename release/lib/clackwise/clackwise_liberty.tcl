@@ -32,6 +32,44 @@ proc show_objects {collection} {
 	puts "}"
 }
 
+set ::clackwise_commands(help) {
+	{Print help for commands}
+	{pattern1 [pattern2 ...]}
+	{
+		{verbose "Print verbose help"}
+	}
+}
+proc help {args} {
+	set ::argv0 "help"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	set params(verbose) 0
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		set commands [array names ::clackwise_commands]
+		foreach pattern $params(__NON_SWITCH_ARGS__) {
+			foreach i [lsearch -glob -all $commands $pattern] {
+				set command [lindex $commands $i]
+				set s [lindex $::clackwise_commands($command) 0]
+				set u [lindex $::clackwise_commands($command) 1]
+				set o [lindex $::clackwise_commands($command) 2]
+				if {$params(verbose)} {
+					set saveargv $::argv0
+					set ::argv0 $command
+					puts [::cmdline::usage $o $u]
+					set ::argv0 $saveargv
+				} else {
+					set spaces [string repeat " " [expr 25 - [string length $command]]]
+					puts "$command$spaces# $s"
+				}
+			}
+		}
+	} else {
+		puts "Try 'help *'"; #TODO: Print help for commonly used commands
+	}
+}
+
 set ::clackwise_commands(get_libs) {
 	{Get libs from memory}
 	{pattern1 [pattern2 ...]}

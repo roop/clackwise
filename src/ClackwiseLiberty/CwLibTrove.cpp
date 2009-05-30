@@ -44,7 +44,7 @@ QList<CwLib*> CwLibTrove::retrieve(const QString &pattern, QRegExp::PatternSynta
     QRegExp regexp(pattern, Qt::CaseSensitive, patternSyntax);
     QHash<QString, CwLib*>::const_iterator i = m_data.constBegin();
     while (i != m_data.constEnd()) {
-        if (regexp.indexIn(i.key()) >= 0) {
+        if (regexp.exactMatch(i.key())) {
             ret << i.value();
         }
         ++i;

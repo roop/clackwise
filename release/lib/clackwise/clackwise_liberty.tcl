@@ -32,3 +32,31 @@ proc show_objects {collection} {
 	puts "}"
 }
 
+proc get_libs {args} {
+	set ::argv0 "get_libs"
+	set options {
+		{regexp "Match patterns as regular expressions"}
+		{exact "Match patterns as exact strings"}
+	}
+	array set params [::cmdline::getoptions args $options {pattern1 [pattern2 ...]}]
+	set QRegExp_Type $::QRegExp_Wildcard
+	if {$params(regexp)} {
+		set QRegExp_Type $::QRegExp_RegExp
+	} elseif {$params(exact)} {
+		set QRegExp_Type $::QRegExp_FixedString
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		array set ret {}
+		foreach pattern $params(__NON_SWITCH_ARGS__) {
+			foreach result [cw_get_libs $pattern $QRegExp_Type] {
+				array set ret "$result 1"
+			}
+		}
+		return [array names ret];
+	} else {
+		error "Error: $::argv0: No patterns specified";
+		return {};
+	}
+	return {};
+}
+

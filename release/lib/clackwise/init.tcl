@@ -17,6 +17,7 @@ if {![catch {package require tclreadline}]} {
 		}
 		return [tclreadline::Print_orig $::tclreadline::result];
 	}
-	::tclreadline::Loop
+	set tclreadline::historyLength 10000
+	::tclreadline::Loop ./.clackwise-history
 }
 

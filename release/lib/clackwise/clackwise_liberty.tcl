@@ -32,13 +32,20 @@ proc show_objects {collection} {
 	puts "}"
 }
 
-proc get_libs {args} {
-	set ::argv0 "get_libs"
-	set options {
+set ::clackwise_commands(get_libs) {
+	{Get libs from memory}
+	{pattern1 [pattern2 ...]}
+	{
 		{regexp "Match patterns as regular expressions"}
 		{exact "Match patterns as exact strings"}
 	}
-	array set params [::cmdline::getoptions args $options {pattern1 [pattern2 ...]}]
+}
+proc get_libs {args} {
+	set ::argv0 "get_libs"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
 	set QRegExp_Type $::QRegExp_Wildcard
 	if {$params(regexp)} {
 		set QRegExp_Type $::QRegExp_RegExp

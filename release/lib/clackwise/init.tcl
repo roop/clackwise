@@ -17,6 +17,8 @@ if {![catch {package require tclreadline}]} {
 		}
 		return [tclreadline::Print_orig $::tclreadline::result];
 	}
+	source ${clackwise_root_path}/lib/clackwise/tclreadlineCwCompleter.tcl
+	::tclreadline::readline customcompleter tclreadline::cw_completer
 	set tclreadline::historyLength 10000
 	::tclreadline::Loop ./.clackwise-history
 }

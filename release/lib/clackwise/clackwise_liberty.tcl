@@ -146,3 +146,81 @@ proc get_libs {args} {
 	return {};
 }
 
+set ::clackwise_commands(get_lib_groups) {
+	{Get lib_cells from memory}
+	{pattern}
+	{
+		{type.arg "Lib group type (eg. lib/cell, lib/cell/pin/timing)"}
+		{regexp "Match pattern as regular expression"}
+		{exact "Match pattern as exact string"}
+	}
+}
+proc get_lib_groups {args} {
+	set ::argv0 "get_lib_groups"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	set QRegExp_Type $::QRegExp_Wildcard
+	if {$params(regexp)} {
+		set QRegExp_Type $::QRegExp_RegExp
+	} elseif {$params(exact)} {
+		set QRegExp_Type $::QRegExp_FixedString
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
+		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
+		if {$paramcount == 1} {
+			set slashcount_pattern [expr [string length $pattern] - \
+							        [string length [string map {/ {}} $pattern]]]
+			set slashcount_type [expr [string length $params(type)] - \
+							     [string length [string map {/ {}} $params(type)]]]
+			if {$QRegExp_Type == $::QRegExp_Wildcard} {
+			} else {
+				if {$slashcount_pattern == $slashcount_type} {
+					set pl [split $pattern /]
+					set tl [split $params(type) /]
+					if {[lindex $tl 0] != "lib"} {
+						error "Error: $::argv0: Lib group type '$params(type)' does not start with 'lib'"
+						return {};
+					}
+					set groups {}
+					for {set i 0} {$i < [expr $slashcount_pattern + 1]} {incr i} {
+						set t [lindex $tl $i]
+						set p [lindex $pl $i]
+						switch -exact $t {
+							lib {
+								set groups [cw_get_libs $p $QRegExp_Type]
+							}
+							default {
+								if {$t == ""} {
+									error "Error: $::argv0: Null subtype specified in lib group type '$params(type)'"
+									return {};
+								}
+								set next_groups {}
+								foreach g $groups {
+									foreach g2 [CwLibGroup_subgroupsByName $g $t $p $QRegExp_Type] {
+										lappend next_groups $g2
+									}
+								}
+								set groups $next_groups
+							}
+						}
+					}
+					return $groups
+				} else {
+					error "Error: $::argv0: Number of '/'s in pattern \"$pattern\" does not match the number of '/'s in type \"$params(type)\". Cannot perform -regexp/-exact match."
+				}
+			}
+		} elseif {$paramcount == 2} {
+			error "Error: $::argv0: That's one pattern too many than what I can handle"
+		} else {
+			error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
+		}
+	} else {
+		error "Error: $::argv0: No patterns specified";
+		return {};
+	}
+	return {};
+}
+

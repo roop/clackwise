@@ -171,21 +171,48 @@ proc get_lib_groups {args} {
 		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
 		if {$paramcount == 1} {
+			set patterns [list $pattern]
 			set slashcount_pattern [expr [string length $pattern] - \
 							        [string length [string map {/ {}} $pattern]]]
 			set slashcount_type [expr [string length $params(type)] - \
 							     [string length [string map {/ {}} $params(type)]]]
 			if {$QRegExp_Type == $::QRegExp_Wildcard} {
-			} else {
-				if {$slashcount_pattern == $slashcount_type} {
-					set pl [split $pattern /]
-					set tl [split $params(type) /]
+				# make the number of slashes in pattern the same as that in the type
+				if {$slashcount_pattern > $slashcount_type} {
+					return {};
+				}
+				if {($slashcount_type > 0) && ($slashcount_pattern < $slashcount_type)} {
+					array set pattern_arr {}
+					set asterisks_to_add [expr $slashcount_type - $slashcount_pattern]
+					for {set d 0} {$d <= $asterisks_to_add} {incr d} {
+						if {($d > 0) && ([string index $pattern 0] != "*")} {
+							continue;
+						}
+						if {($d < $asterisks_to_add) && ([string index $pattern end] != "*")} {
+							continue;
+						}
+						set prefix [string repeat "*/" $d]
+						set suffix [string repeat "/*" [expr $asterisks_to_add - $d]]
+						array set pattern_arr [list [join [list $prefix $pattern $suffix] ""] 1]
+					}
+					set patterns [array names pattern_arr]
+				}
+			}
+			set ret {}
+			foreach pat $patterns {
+				set scount_pattern [expr [string length $pat] - \
+									[string length [string map {/ {}} $pat]]]
+				set scount_type [expr [string length $params(type)] - \
+								 [string length [string map {/ {}} $params(type)]]]
+				set pl [split $pat /]
+				set tl [split $params(type) /]
+				if {$scount_pattern == $scount_type} {
 					if {[lindex $tl 0] != "lib"} {
 						error "Error: $::argv0: Lib group type '$params(type)' does not start with 'lib'"
 						return {};
 					}
 					set groups {}
-					for {set i 0} {$i < [expr $slashcount_pattern + 1]} {incr i} {
+					for {set i 0} {$i < [expr $scount_pattern + 1]} {incr i} {
 						set t [lindex $tl $i]
 						set p [lindex $pl $i]
 						switch -exact $t {
@@ -195,7 +222,6 @@ proc get_lib_groups {args} {
 							default {
 								if {$t == ""} {
 									error "Error: $::argv0: Null subtype specified in lib group type '$params(type)'"
-									return {};
 								}
 								set next_groups {}
 								foreach g $groups {
@@ -207,11 +233,14 @@ proc get_lib_groups {args} {
 							}
 						}
 					}
-					return $groups
+					foreach g $groups {
+						lappend ret $g
+					}
 				} else {
 					error "Error: $::argv0: Number of '/'s in pattern \"$pattern\" does not match the number of '/'s in type \"$params(type)\". Cannot perform -regexp/-exact match."
 				}
 			}
+			return $ret
 		} elseif {$paramcount == 2} {
 			error "Error: $::argv0: That's one pattern too many than what I can handle"
 		} else {

@@ -204,7 +204,7 @@ QList<CwLibGroup*> CwLibGroup::subgroupsByName(const QString &type, const QStrin
     QList<CwLibGroup*> ret;
     QRegExp regexp(pattern, Qt::CaseSensitive, QRegExp::PatternSyntax(patternSyntax));
     foreach(CwLibGroup *subgroup, d->m_subgroups) {
-        if (subgroup->type() == type && regexp.indexIn(subgroup->name()) >= 0) {
+        if (subgroup->type() == type && regexp.exactMatch(subgroup->name())) {
             ret << subgroup;
         }
     }

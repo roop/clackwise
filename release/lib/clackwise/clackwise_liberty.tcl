@@ -150,7 +150,7 @@ set ::clackwise_commands(get_lib_groups) {
 	{Get lib_cells from memory}
 	{pattern}
 	{
-		{type.arg "Lib group type (eg. lib/cell, lib/cell/pin/timing)"}
+		{type.arg "no default" "Lib group type (eg. lib/cell, lib/cell/pin/timing)"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
 	}
@@ -167,80 +167,15 @@ proc get_lib_groups {args} {
 	} elseif {$params(exact)} {
 		set QRegExp_Type $::QRegExp_FixedString
 	}
+	if {$params(type) == "no default"} {
+		error "Error: $::argv0: -type is required"
+	}
+	set pattern ""
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
 		if {$paramcount == 1} {
-			set patterns [list $pattern]
-			set slashcount_pattern [expr [string length $pattern] - \
-							        [string length [string map {/ {}} $pattern]]]
-			set slashcount_type [expr [string length $params(type)] - \
-							     [string length [string map {/ {}} $params(type)]]]
-			if {$QRegExp_Type == $::QRegExp_Wildcard} {
-				# make the number of slashes in pattern the same as that in the type
-				if {$slashcount_pattern > $slashcount_type} {
-					return {};
-				}
-				if {($slashcount_type > 0) && ($slashcount_pattern < $slashcount_type)} {
-					array set pattern_arr {}
-					set asterisks_to_add [expr $slashcount_type - $slashcount_pattern]
-					for {set d 0} {$d <= $asterisks_to_add} {incr d} {
-						if {($d > 0) && ([string index $pattern 0] != "*")} {
-							continue;
-						}
-						if {($d < $asterisks_to_add) && ([string index $pattern end] != "*")} {
-							continue;
-						}
-						set prefix [string repeat "*/" $d]
-						set suffix [string repeat "/*" [expr $asterisks_to_add - $d]]
-						array set pattern_arr [list [join [list $prefix $pattern $suffix] ""] 1]
-					}
-					set patterns [array names pattern_arr]
-				}
-			}
-			set ret {}
-			foreach pat $patterns {
-				set scount_pattern [expr [string length $pat] - \
-									[string length [string map {/ {}} $pat]]]
-				set scount_type [expr [string length $params(type)] - \
-								 [string length [string map {/ {}} $params(type)]]]
-				set pl [split $pat /]
-				set tl [split $params(type) /]
-				if {$scount_pattern == $scount_type} {
-					if {[lindex $tl 0] != "lib"} {
-						error "Error: $::argv0: Lib group type '$params(type)' does not start with 'lib'"
-						return {};
-					}
-					set groups {}
-					for {set i 0} {$i < [expr $scount_pattern + 1]} {incr i} {
-						set t [lindex $tl $i]
-						set p [lindex $pl $i]
-						switch -exact $t {
-							lib {
-								set groups [cw_get_libs $p $QRegExp_Type]
-							}
-							default {
-								if {$t == ""} {
-									error "Error: $::argv0: Null subtype specified in lib group type '$params(type)'"
-								}
-								set next_groups {}
-								foreach g $groups {
-									foreach g2 [CwLibGroup_subgroupsByName $g $t $p $QRegExp_Type] {
-										lappend next_groups $g2
-									}
-								}
-								set groups $next_groups
-							}
-						}
-					}
-					foreach g $groups {
-						lappend ret $g
-					}
-				} else {
-					error "Error: $::argv0: Number of '/'s in pattern \"$pattern\" does not match the number of '/'s in type \"$params(type)\". Cannot perform -regexp/-exact match."
-				}
-			}
-			return $ret
+			return [_get_lib_groups $params(type) $pattern $QRegExp_Type]
 		} elseif {$paramcount == 2} {
 			error "Error: $::argv0: That's one pattern too many than what I can handle"
 		} else {
@@ -248,8 +183,81 @@ proc get_lib_groups {args} {
 		}
 	} else {
 		error "Error: $::argv0: No patterns specified";
-		return {};
 	}
 	return {};
+}
+
+proc _get_lib_groups {type pattern QRegExp_Type} {
+	set ::argv0 "get_lib_groups"
+	set patterns [list $pattern]
+	set slashcount_pattern [expr [string length $pattern] - \
+							[string length [string map {/ {}} $pattern]]]
+	set slashcount_type [expr [string length $type] - \
+						 [string length [string map {/ {}} $type]]]
+	if {$QRegExp_Type == $::QRegExp_Wildcard} {
+		# make the number of slashes in pattern the same as that in the type
+		if {$slashcount_pattern > $slashcount_type} {
+			return {};
+		}
+		if {($slashcount_type > 0) && ($slashcount_pattern < $slashcount_type)} {
+			array set pattern_arr {}
+			set asterisks_to_add [expr $slashcount_type - $slashcount_pattern]
+			for {set d 0} {$d <= $asterisks_to_add} {incr d} {
+				if {($d > 0) && ([string index $pattern 0] != "*")} {
+					continue;
+				}
+				if {($d < $asterisks_to_add) && ([string index $pattern end] != "*")} {
+					continue;
+				}
+				set prefix [string repeat "*/" $d]
+				set suffix [string repeat "/*" [expr $asterisks_to_add - $d]]
+				array set pattern_arr [list [join [list $prefix $pattern $suffix] ""] 1]
+			}
+			set patterns [array names pattern_arr]
+		}
+	}
+	set ret {}
+	foreach pat $patterns {
+		set scount_pattern [expr [string length $pat] - \
+							[string length [string map {/ {}} $pat]]]
+		set scount_type [expr [string length $type] - \
+						 [string length [string map {/ {}} $type]]]
+		set pl [split $pat /]
+		set tl [split $type /]
+		if {$scount_pattern == $scount_type} {
+			if {[lindex $tl 0] != "lib"} {
+				error "Error: $::argv0: Lib group type '$type' does not start with 'lib'"
+				return {};
+			}
+			set groups {}
+			for {set i 0} {$i < [expr $scount_pattern + 1]} {incr i} {
+				set t [lindex $tl $i]
+				set p [lindex $pl $i]
+				switch -exact $t {
+					lib {
+						set groups [cw_get_libs $p $QRegExp_Type]
+					}
+					default {
+						if {$t == ""} {
+							error "Error: $::argv0: Null subtype specified in lib group type '$type'"
+						}
+						set next_groups {}
+						foreach g $groups {
+							foreach g2 [CwLibGroup_subgroupsByName $g $t $p $QRegExp_Type] {
+								lappend next_groups $g2
+							}
+						}
+						set groups $next_groups
+					}
+				}
+			}
+			foreach g $groups {
+				lappend ret $g
+			}
+		} else {
+			error "Error: $::argv0: Number of '/'s in pattern \"$pattern\" does not match the number of '/'s in type \"$type\". Cannot perform -regexp/-exact match."
+		}
+	}
+	return $ret
 }
 

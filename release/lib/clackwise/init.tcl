@@ -7,6 +7,21 @@ puts "Loading ClackwiseLiberty module ...\n"
 load ${clackwise_root_path}/lib/libClackwiseLiberty.so ClackwiseLiberty
 source ${clackwise_root_path}/lib/clackwise/clackwise_liberty.tcl
 
+# Load .clackwiserc files
+set cwrcs {}
+if {[info exists clackwise_root_path]} {
+	lappend cwrcs ${clackwise_root_path}/.clackwiserc
+}
+if {[info exists env(HOME)]} {
+	lappend cwrcs $env(HOME)/.clackwiserc
+}
+lappend cwrcs .clackwiserc
+foreach cwrc $cwrcs {
+	if {[file exists $cwrc]} {
+		source $cwrc
+	}
+}
+
 # Activate tcl readline if found
 if {![catch {package require tclreadline}]} {
 	rename tclreadline::Print tclreadline::Print_orig

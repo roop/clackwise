@@ -134,11 +134,8 @@ libgrouphead :       // of type CwLibGroup*
 		 	$$ = QVariant();
 			if ($3.toStringList().size() == 0) {
 				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
-			} else if ($3.toStringList().size() == 1) {
-				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().at(0)));
 			} else {
-				CwLibertyerror($$, "Expecting one or zero names for lib group, but got more");
-				YYERROR;
+				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().join(",")));
 			}
          }
        | variable '(' error ')'

@@ -138,6 +138,15 @@ libgrouphead :       // of type CwLibGroup*
 				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().join(",")));
 			}
          }
+	   | variable '(' space_separated_value_list ')'
+         {
+			$$ = QVariant();
+			if ($3.toStringList().size() == 0) {
+				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
+			} else {
+				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().join(" ")));
+			}
+         }
        | variable '(' error ')'
          {
 		 	$$ = QVariant();
@@ -259,6 +268,16 @@ value_list :         // of type QStringList
        | value_list ',' value 
          {
 		   $$ = $1.toStringList() << $3.toString();
+         };
+
+space_separated_value_list :     // of type QStringList
+         value
+         {
+		   $$ = QStringList($1.toString());
+         } 
+       | space_separated_value_list value 
+         {
+		   $$ = $1.toStringList() << $2.toString();
          };
 
 value_expr :               // of type QString

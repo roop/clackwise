@@ -26,6 +26,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 #include <QVariantList>
 #include "Liberty/CwLibGroup.h"
+#include <stdio.h>
 
 using namespace Clackwise;
 
@@ -48,7 +49,8 @@ CwLibGroup* parseLiberty(const QString &filename) {
 
     CwLibertyin = fopen(filename.toAscii().data(), "r");
     if (CwLibertyin == NULL) {
-      qDebug() << "Error: Can't open lib file " << filename << " for reading" << endl;
+	  printf("Error: Can't open lib file %s for reading\n", qPrintable(filename));
+	  fflush(stdout);
       return NULL;
     }
     QVariant result;
@@ -70,7 +72,8 @@ CwLibGroup* parseLiberty(const QString &filename) {
 
 void CwLibertyerror(QVariant& ret, const char *str) {
     parseErrorRecoveryTriggered = true;
-    qDebug() << QString("Error: %1 at line %2 of library file %3\n").arg(str).arg(CwLibertylineno).arg(libertyFilename);
+	printf("Error: %s at line %d of library file %s\n", str, CwLibertylineno, qPrintable(libertyFilename));
+	fflush(stdout);
 }
  
   
@@ -241,8 +244,10 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
-						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
+					printf("Error: define or define_group statement incorrect at line %d"
+					       " of library file %s . The statement was skipped.\n",
+						   CwLibertylineno, qPrintable(libertyFilename));
+					fflush(stdout);
 				}
 			} else {
 		 		$$ = QVariantList() << "complex_attribute" << $1.toString() << $3.toStringList();
@@ -256,8 +261,10 @@ complex_attribute :  // of type QVariantList
 				if ($3.toStringList().size() != 3 ||
 					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
-					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
-						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
+					printf("Error: define or define_group statement incorrect at line %d"
+					       " of library file %s . The statement was skipped.\n",
+						   CwLibertylineno, qPrintable(libertyFilename));
+					fflush(stdout);
 				}
 			} else {
 		 		$$ = QVariantList() << "complex_attribute" << $1.toString() << $3.toStringList();

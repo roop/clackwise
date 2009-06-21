@@ -38,6 +38,8 @@ if {[info exists init_eval_command] && $init_eval_command != ""} {
 	eval $init_eval_command
 }
 
+set ::tcl_interactive 1
+
 # Activate tcl readline if found
 if {![catch {package require tclreadline}]} {
 	rename tclreadline::Print tclreadline::Print_orig

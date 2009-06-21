@@ -43,6 +43,7 @@ extern "C" int CwLibertywrap() { return 1; }
 \n                             ;
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */
++                         ; /* ignore whitespace */
 .                              return (char) yytext[0]; 
 %%
 

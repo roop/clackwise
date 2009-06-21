@@ -38,8 +38,8 @@ extern "C" int CwLibertywrap() { return 1; }
 (\+|-)?[0-9]+                                        CwLibertylval = QString(yytext); return INTEGER;
 (\+|-)?[0-9\.]+(e(\+|-)?[0-9]+)?                     CwLibertylval = QString(yytext); return REAL;
 \"[^\"]*\"                                           CwLibertylval = QString(yytext); return QUOTED_STRING;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+[\(\[][0-9]+[\]\)]   CwLibertylval = QString(yytext); return ANY_WORD;
-[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\-\+\=]+             CwLibertylval = QString(yytext); return ANY_WORD;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\=]+[\(\[][0-9]+[\]\)]   CwLibertylval = QString(yytext); return ANY_WORD;
+[a-zA-Z_0-9\\.\~\!\@\#\$\%\^\&\*\=]+                     CwLibertylval = QString(yytext); return ANY_WORD;
 \n                             ;
                                /* ignore newline */
 [ \t]+                         ; /* ignore whitespace */

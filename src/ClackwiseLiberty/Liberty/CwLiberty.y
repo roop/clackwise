@@ -186,11 +186,11 @@ libstatements :      // of type QVariantList
          };
 
 simple_attribute :   // of type QVariantList
-         variable   ':'   value    
+         variable   ':'   value_expr
          {
            $$ = QVariantList() << "simple_attribute" << $1.toString() << $3.toString();
          }
-       | variable   ':'   value    ';'
+       | variable   ':'   value_expr    ';'
          {
            $$ = QVariantList() << "simple_attribute" << $1.toString() << $3.toString();
          }
@@ -263,6 +263,28 @@ value_list :         // of type QStringList
          {
 		   $$ = $1.toStringList() << $3.toString();
          };
+
+value_expr :               // of type QString
+      value
+      {
+        $$ = $1.toString();
+      }
+    | value '+' value_expr
+      {
+        $$ = $1.toString() + " + " + $3.toString();
+      }
+    | value '-' value_expr
+      {
+        $$ = $1.toString() + " - " + $3.toString();
+      }
+    | value '*' value_expr
+      {
+        $$ = $1.toString() + " * " + $3.toString();
+      }
+    | value '/' value_expr
+      {
+        $$ = $1.toString() + " * " + $3.toString();
+      }
 
 variable :           // of type QString
         KEYWORD ;

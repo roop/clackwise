@@ -214,7 +214,7 @@ complex_attribute :  // of type QVariantList
 				$$ = QVariantList() << "multivalued_attribute" << $1.toString() << $3.toStringList();
 				QString attrType = $3.toStringList().last();
 				if ($3.toStringList().size() != 3 ||
-		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
+					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
 					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;
@@ -229,7 +229,7 @@ complex_attribute :  // of type QVariantList
 				$$ = QVariantList() << "multivalued_attribute" << $1.toString() << $3.toStringList();
 				QString attrType = $3.toStringList().last();
 				if ($3.toStringList().size() != 3 ||
-		    		QRegExp("(boolean|string|integer|float)").exactMatch(attrType)) {
+					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
 					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
 					qDebug() << "Error: define or define_group statement incorrect at line " << CwLibertylineno
 						 	 << " of library file " << libertyFilename << ". Skipped." << endl;

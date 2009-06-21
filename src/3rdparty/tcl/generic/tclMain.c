@@ -16,6 +16,8 @@
 #include "tcl.h"
 #include "tclInt.h"
 #include <unistd.h> /* for getcwd */
+#include <stdlib.h>
+#include <getopt.h>
 
 #define CLACKWISE_NAME "Clackwise"
 #define CLACKWISE_VERSION "0.1.0 (alpha)"
@@ -261,7 +263,47 @@ Tcl_Main(argc, argv, appInitProc)
 	char cwInitTcl[255] = "";
 	FILE *cwInitTcl_fp;
 
-    Tcl_FindExecutable(argv[0]);
+    /* Handle cw_shell command line options */
+    int c;
+    int cmdline_error = 0;
+    static int cmdline_version = 0;
+    static int cmdline_help = 0;
+    static int cmdline_no_init = 0;
+    char cmdline_f[1024] = "";
+    char cmdline_x[1024] = "";
+    int option_index = 0;
+    static struct option long_options[] = {
+        {"version", no_argument, &cmdline_version, 1},
+        {"help", no_argument, &cmdline_help, 1},
+        {"no_init", no_argument, &cmdline_no_init, 1},
+        {0, 0, 0, 0}
+    };
+    while (1) {
+        if ((c = getopt_long_only(argc, argv, "f:x:", long_options, &option_index)) == -1)
+            break;
+        switch (c) {
+            case 'f':
+                strcpy(cmdline_f, optarg);
+                break;
+            case 'x':
+                strcpy(cmdline_x, optarg);
+                break;
+            case '?':
+                cmdline_error = 1;
+                break;
+        }
+    }
+    if (cmdline_help) {
+        printf("Usage: cw_shell [-no_init] [-f file] [-x command] [-version] [-help]\n", argv[0]);
+        exit(0);
+    }
+    if (cmdline_version) {
+        printf("%s %s\n", CLACKWISE_NAME, CLACKWISE_VERSION);
+        exit(0);
+    }
+    if (cmdline_error) {
+        exit(1);
+    }
 
     interp = Tcl_CreateInterp();
     Tcl_InitMemory(interp);
@@ -287,46 +329,25 @@ Tcl_Main(argc, argv, appInitProc)
     }
 
     /*
-     * Make command-line arguments available in the Tcl variables "argc"
-     * and "argv".  If the first argument doesn't start with a "-" then
-     * strip it off and use it as the name of a script file to process.
+     * Set Tcl variables based on command line arguments:
+     *      -f file -> $init_eval_file
+     *      -x command -> $init_eval_command
+     *      -no_init -> $init_disable_clackwiserc
      */
 
-    if (TclGetStartupScriptPath() == NULL) {
-	if ((argc > 1) && (argv[1][0] != '-')) {
-	    TclSetStartupScriptFileName(argv[1]);
-	    argc--;
-	    argv++;
-	}
-    }
+    Tcl_DString init_eval_file, init_eval_command;
+	Tcl_ExternalToUtfDString(NULL, cmdline_f, -1, &init_eval_file);
+	Tcl_ExternalToUtfDString(NULL, cmdline_x, -1, &init_eval_command);
+    Tcl_SetVar(interp, "init_eval_file", Tcl_DStringValue(&init_eval_file), TCL_GLOBAL_ONLY);
+    Tcl_SetVar(interp, "init_eval_command", Tcl_DStringValue(&init_eval_command), TCL_GLOBAL_ONLY);
+    Tcl_DStringFree(&init_eval_file);
+    Tcl_DStringFree(&init_eval_command);
 
-    if (TclGetStartupScriptPath() == NULL) {
-	Tcl_ExternalToUtfDString(NULL, argv[0], -1, &appName);
-    } else {
-	TclSetStartupScriptFileName(Tcl_ExternalToUtfDString(NULL,
-		TclGetStartupScriptFileName(), -1, &appName));
-    }
-    Tcl_SetVar(interp, "argv0", Tcl_DStringValue(&appName), TCL_GLOBAL_ONLY);
-    Tcl_DStringFree(&appName);
-    argc--;
-    argv++;
-
-    objPtr = Tcl_NewIntObj(argc);
-    Tcl_IncrRefCount(objPtr);
-    Tcl_SetVar2Ex(interp, "argc", NULL, objPtr, TCL_GLOBAL_ONLY);
-    Tcl_DecrRefCount(objPtr);
-    
-    argvPtr = Tcl_NewListObj(0, NULL);
-    while (argc--) {
-	Tcl_DString ds;
-	Tcl_ExternalToUtfDString(NULL, *argv++, -1, &ds);
-	Tcl_ListObjAppendElement(NULL, argvPtr, Tcl_NewStringObj(
-		Tcl_DStringValue(&ds), Tcl_DStringLength(&ds)));
-	Tcl_DStringFree(&ds);
-    }
-    Tcl_IncrRefCount(argvPtr);
-    Tcl_SetVar2Ex(interp, "argv", NULL, argvPtr, TCL_GLOBAL_ONLY);
-    Tcl_DecrRefCount(argvPtr);
+    Tcl_Obj *init_disable_clackwiserc;
+    init_disable_clackwiserc = Tcl_NewIntObj(cmdline_no_init);
+    Tcl_IncrRefCount(init_disable_clackwiserc);
+    Tcl_SetVar2Ex(interp, "init_disable_clackwiserc", NULL, init_disable_clackwiserc, TCL_GLOBAL_ONLY);
+    Tcl_DecrRefCount(init_disable_clackwiserc);
 
     /*
      * Set the "tcl_interactive" variable.

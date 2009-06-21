@@ -19,7 +19,7 @@ library(test.db) {
     pin(in) {
       direction: in;
     }
-    pin(out) {
+    pin(out1 out2) {
       direction: out;
       timing() {
         timing_sense : negative_unate;

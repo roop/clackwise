@@ -97,70 +97,89 @@ value:
 */
 
 everything :         // of Type CwLibGroup*
-         libgroup
+         libgroups
          {
-           ret = $1;
+			ret = 0;
+			if ($$.type() == QVariant::List &&
+			    !$$.toList().isEmpty() &&
+				$$.toList().first().value<CwLibGroup*>() != NULL) {
+			    ret = $1.toList().first();
+			}
          };
 
-libgroup :           // of type CwLibGroup*
+libgroups :           // of type QList<CwLibGroup*>
          libgrouphead libgrouptail
          {
 		 	$$ = $1;
-			if ($$.value<CwLibGroup*>() != NULL) {
-				CwLibGroup *lg = $$.value<CwLibGroup*>();
-				QVariantList statements = $2.value<QVariantList>();
-				for (int i = 0; i < statements.count(); i++) {
-					QVariant statement = statements.at(i);
-					if (statement.value<CwLibGroup*>() != 0) { // lib group
-						lg->addSubgroup(statement.value<CwLibGroup*>());
-					} else if (statement.toList().size() > 2) { // attribute
-						QVariantList attrStatement = statement.toList();
-						QString variableName = attrStatement.at(1).toString();
-						if (attrStatement.at(0).toString() == "simple_attribute") {
-							lg->setSimpleAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toString());
-						} else if (attrStatement.at(0).toString() == "complex_attribute") {
-							lg->setComplexAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
-						} else if (attrStatement.at(0).toString() == "multivalued_attribute") {
-							lg->setMultivaluedAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
+			if ($$.type() == QVariant::List &&
+			    !$$.toList().isEmpty() &&
+				$$.toList().first().value<CwLibGroup*>() != NULL) {
+				foreach(QVariant v, $$.toList()) {
+					CwLibGroup *lg = v.value<CwLibGroup*>();
+					if (lg == NULL) {
+						continue;
+					}
+					QVariantList statements = $2.value<QVariantList>();
+					for (int i = 0; i < statements.count(); i++) {
+						QVariant statement = statements.at(i);
+						if (statement.value<CwLibGroup*>() != 0) { // lib group
+							lg->addSubgroup(statement.value<CwLibGroup*>());
+						} else if (statement.toList().size() > 2) { // attribute
+							QVariantList attrStatement = statement.toList();
+							QString variableName = attrStatement.at(1).toString();
+							if (attrStatement.at(0).toString() == "simple_attribute") {
+								lg->setSimpleAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toString());
+							} else if (attrStatement.at(0).toString() == "complex_attribute") {
+								lg->setComplexAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
+							} else if (attrStatement.at(0).toString() == "multivalued_attribute") {
+								lg->setMultivaluedAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
+							}
 						}
 					}
 				}
 			}
          }
 
-libgrouphead :       // of type CwLibGroup*
+libgrouphead :       // of type QList<CwLibGroup*>
 	     variable '(' value_list ')'
          {
-		 	$$ = QVariant();
+			QVariantList list;
 			if ($3.toStringList().size() == 0) {
-				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
+				list << QVariant::fromValue(new CwLibGroup($1.toString()));
 			} else {
-				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().join(",")));
+				list << QVariant::fromValue(new CwLibGroup($1.toString(), $3.toStringList().join(",")));
 			}
+			$$ = list;
          }
 	   | variable '(' space_separated_value_list ')'
          {
-			$$ = QVariant();
+			QVariantList list;
 			if ($3.toStringList().size() == 0) {
-				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
+				list << QVariant::fromValue(new CwLibGroup($1.toString()));
 			} else {
-				$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString(), $3.toStringList().join(" ")));
+				foreach(QString name, $3.toStringList()) {
+					list << QVariant::fromValue(new CwLibGroup($1.toString(), name));
+				}
 			}
+			$$ = list;
          }
        | variable '(' error ')'
          {
-		 	$$ = QVariant();
-			$$.setValue<CwLibGroup*>(new CwLibGroup($1.toString()));
+			QVariantList list;
+			list << QVariant::fromValue(new CwLibGroup($1.toString()));
+			$$ = list;
          }
        | error '(' value_list ')'
          {
-		 	$$ = QVariant();
-			$$.setValue<CwLibGroup*>(new CwLibGroup());
+			QVariantList list;
+			list << QVariant::fromValue(new CwLibGroup());
+			$$ = list;
          }
        | error '(' error ')'
          {
-		 	$$ = QVariant();
-			$$.setValue<CwLibGroup*>(new CwLibGroup());
+			QVariantList list;
+			list << QVariant::fromValue(new CwLibGroup());
+			$$ = list;
          };
 
 libgrouptail :       // of type QVariantList
@@ -186,9 +205,9 @@ libstatements :      // of type QVariantList
          {
 		 	$$ = $1.toList() << $2;
          }
-       | libstatements libgroup
+       | libstatements libgroups
          {
-		 	$$ = $1.toList() << $2;
+			$$ = $1.toList() << $2.toList();
          };
 
 simple_attribute :   // of type QVariantList

@@ -146,7 +146,7 @@ proc get_libs {args} {
 	return {};
 }
 
-proc _get_lib_groups {type pattern QRegExp_Type} {
+proc _get_lib_groups {type pattern QRegExp_Type {of ""}} {
 	set patterns [list $pattern]
 	set slashcount_pattern [expr [string length $pattern] - \
 							[string length [string map {/ {}} $pattern]]]
@@ -183,11 +183,11 @@ proc _get_lib_groups {type pattern QRegExp_Type} {
 		set pl [split $pat /]
 		set tl [split $type /]
 		if {$scount_pattern == $scount_type} {
-			if {[lindex $tl 0] != "lib"} {
-				error "Error: $::argv0: Lib group type '$type' does not start with 'lib'"
+			if {$of == "" && [lindex $tl 0] != "lib"} {
+				error "Error: $::argv0: Expecting -type '$type' to start with 'lib'"
 				return {};
 			}
-			set groups {}
+			set groups $of
 			for {set i 0} {$i < [expr $scount_pattern + 1]} {incr i} {
 				set t [lindex $tl $i]
 				set p [lindex $pl $i]
@@ -224,6 +224,7 @@ set ::clackwise_commands(get_lib_groups) {
 	{pattern}
 	{
 		{type.arg "no default" "Lib group type (eg. lib/cell, lib/cell/pin/timing)"}
+		{of_objects.arg "" "Lib group of which object"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
 	}
@@ -248,7 +249,7 @@ proc get_lib_groups {args} {
 		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
 		if {$paramcount == 1} {
-			return [_get_lib_groups $params(type) $pattern $QRegExp_Type]
+			return [_get_lib_groups $params(type) $pattern $QRegExp_Type $params(of_objects)]
 		} elseif {$paramcount == 2} {
 			error "Error: $::argv0: That's one pattern too many than what I can handle"
 		} else {
@@ -264,6 +265,7 @@ set ::clackwise_commands(get_lib_cells) {
 	{Get lib cells from memory}
 	{pattern}
 	{
+		{of_objects.arg "" "Cells of which lib"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
 	}
@@ -285,7 +287,7 @@ proc get_lib_cells {args} {
 		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
 		if {$paramcount == 1} {
-			return [_get_lib_groups "lib/cell" $pattern $QRegExp_Type]
+			return [_get_lib_groups "lib/cell" $pattern $QRegExp_Type $params(of_objects)]
 		} elseif {$paramcount == 2} {
 			error "Error: $::argv0: That's one pattern too many than what I can handle"
 		} else {

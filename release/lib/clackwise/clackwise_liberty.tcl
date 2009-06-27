@@ -327,3 +327,59 @@ proc get_lib_cells {args} {
 	}
 	return {};
 }
+
+set ::clackwise_commands(get_lib_pins) {
+	{Get lib pins from memory}
+	{pattern}
+	{
+		{of_objects.arg "" "Pins of which lib"}
+		{regexp "Match pattern as regular expression"}
+		{exact "Match pattern as exact string"}
+	}
+}
+proc get_lib_pins {args} {
+	set ::argv0 "get_lib_pins"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	set QRegExp_Type $::QRegExp_Wildcard
+	if {$params(regexp)} {
+		set QRegExp_Type $::QRegExp_RegExp
+	} elseif {$params(exact)} {
+		set QRegExp_Type $::QRegExp_FixedString
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
+	} else {
+		if {$params(of_objects) == ""} {
+			error "Error: $::argv0: No patterns specified";
+			return {}
+		} else {
+			set pattern "*"
+			set paramcount 1
+		}
+	}
+	if {$paramcount == 1} {
+		if {$params(of_objects) == ""} {
+			return [concat \
+					[_get_lib_groups "library/cell/bus" $pattern $QRegExp_Type] \
+					[_get_lib_groups "library/cell/pin" $pattern $QRegExp_Type]]
+		} else {
+			set of_objects_type [CwLibGroup_type [lindex $params(of_objects) 0]]
+			if {$of_objects_type == "cell"} {
+				return [concat \
+						[_get_lib_groups "bus" $pattern $QRegExp_Type $params(of_objects)] \
+						[_get_lib_groups "pin" $pattern $QRegExp_Type $params(of_objects)]]
+			} else {
+				error "Error: $::argv0: Expected object of type 'cell' but got '$of_objects_type' for -of_objects";
+			}
+		}
+	} elseif {$paramcount == 2} {
+		error "Error: $::argv0: That's one pattern too many than what I can handle"
+	} else {
+		error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
+	}
+	return {};
+}

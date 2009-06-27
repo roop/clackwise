@@ -42,8 +42,8 @@ public:
     // store simple and complex attributes
     // if the value is a list, it's a complex attribute. (like capacitive_load_unit(1,pf); )
     // else a simple attribute. (like voltage_unit: 1mV; )
-    QMultiMap<QString, QVariant> m_libAttributes;
-    QMultiMap<QString, QVariant> m_userAttributes;
+    QMultiHash<QString, QVariant> m_libAttributes;
+    QMultiHash<QString, QVariant> m_userAttributes;
 
     // store subgroups
     QList<CwLibGroup*> m_subgroups;

@@ -34,9 +34,10 @@ class CwLibGroup
 {
 public:
 
-    enum AttributeCategory {
-        LibAttribute,
-        UserAttribute
+    enum LibAttributeType {
+        UnknownLibAttribute = -1,
+        SimpleLibAttribute = 0,
+        ComplexLibAttribute
     };
 
     enum LibAttributeValueType {
@@ -75,54 +76,53 @@ public:
 
     // set a simple attribute
     // any existing attribute of the same name will be replaced
-    void setSimpleAttribute(AttributeCategory category, QString name, QString value);
+    void setSimpleLibAttribute(QString name, QString value);
+    void setUserAttribute(QString name, QString value);
 
     // set a complex attribute
     // any existing attribute of the same name will be replaced
-    void setComplexAttribute(AttributeCategory category, QString name, QStringList value);
-    void setComplexAttribute(AttributeCategory category, QString name, QString value1,
-                             QString value2 = QString(),
-                             QString value3 = QString(),
-                             QString value4 = QString(),
-                             QString value5 = QString());
+    void setComplexLibAttribute(QString name, QStringList value);
 
     // set a multivalued complex attribute
     // all existing attributes of the same name will be kept
     // this is to support attributes like define, define_group,
     // which can occur multiple times legally
-    void setMultivaluedAttribute(AttributeCategory category, QString name, QStringList value);
-    void setMultivaluedAttribute(AttributeCategory category, QString name, QString value1,
-                                 QString value2 = QString(),
-                                 QString value3 = QString(),
-                                 QString value4 = QString(),
-                                 QString value5 = QString());
+    void setLibDefine(QString name, QStringList value);
 
     // remove an attribute
-    void removeAttribute(AttributeCategory category, QString name);
+    void removeLibAttribute(QString name);
+    void removeUserAttribute(QString name);
 
-    // remove a particular value of an attribute
-    // removes the attribute only if the value is as specified
-    // this is more relevant for multivalued attributes
-    void removeAttribute(AttributeCategory category, QString name, QVariant value);
+    // remove a define or define_group special complex attribute
+    void removeLibDefine(const QString &name, const QStringList &value);
 
 	// check for an attribute by name
-	bool hasAttribute(AttributeCategory category, QString name) const;
+	bool hasLibAttribute(QString name) const;
+	bool hasUserAttribute(QString name) const;
+	bool hasLibDefine(QString name) const;
 
     // get the value of an attribute
-    // the attribute type can be derived from the return type
-    // QString => simple attribute
-    // QList<QString> => complex attribute
-    // QList<QList<QString> > => multivalued complex attribute
-    QVariant attributeValue(AttributeCategory category, QString name) const;
+    QStringList libAttributeValue(QString name) const;
+    QString userAttributeValue(QString name) const;
+
+    // query whether it's a simple attribute, or a complex attribute
+	// note that even if libAttributeValue() returns a list with a single item,
+	// it might be a complex attribute
+    LibAttributeType libAttributeType(QString name) const;
+
+    // get the value of defines
+	QList<QStringList> libDefineValues(QString name) const;
 
     // remove all attributes
-    void clearAttributes(AttributeCategory category);
+    void clearLibAttributes();
+    void clearLibDefines();
 
     // return a list of all attributes
-    QStringList attributes(AttributeCategory category) const;
+    QStringList libAttributes() const;
+    QStringList userAttributes() const;
+    QStringList libDefines() const;
 
     int subgroupsCount() const;
-    int attributesCount(AttributeCategory category) const;
 
     QString toText(const QString& prefix = QString("")) const;
 

@@ -42,8 +42,13 @@ public:
     // store simple and complex attributes
     // if the value is a list, it's a complex attribute. (like capacitive_load_unit(1,pf); )
     // else a simple attribute. (like voltage_unit: 1mV; )
-    QMultiHash<QString, QVariant> m_libAttributes;
-    QMultiHash<QString, QVariant> m_userAttributes;
+    QHash<QString, QVariant> m_libAttributes;
+
+	// store lib defines
+    QMultiHash<QString, QStringList> m_libDefines;
+
+	// store user attributes
+    QHash<QString, QString> m_userAttributes;
 
     // store subgroups
     QList<CwLibGroup*> m_subgroups;
@@ -229,179 +234,118 @@ QList<CwLibGroup*> CwLibGroup::subgroupsBySequence(const QString &typeSequence, 
     return ret;
 }
 
-void CwLibGroup::setSimpleAttribute(AttributeCategory category, QString name, QString value)
+void CwLibGroup::setSimpleLibAttribute(QString name, QString value)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.replace(name, value);
-            break;
-        case UserAttribute:
-            d->m_userAttributes.replace(name, value);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_libAttributes.insert(name, value);
 }
 
-void CwLibGroup::setComplexAttribute(AttributeCategory category, QString name, QStringList value)
+void CwLibGroup::setUserAttribute(QString name, QString value)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.replace(name, value);
-            break;
-        case UserAttribute:
-            d->m_userAttributes.replace(name, value);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_userAttributes.insert(name, value);
 }
 
-void CwLibGroup::setComplexAttribute(AttributeCategory category, QString name, QString value1,
-                                   QString value2,
-                                   QString value3,
-                                   QString value4,
-                                   QString value5)
-{
-    QStringList valueList;
-    valueList.append(value1);
-    if (!value2.isNull())
-        valueList.append(value2);
-    if (!value3.isNull())
-        valueList.append(value3);
-    if (!value4.isNull())
-        valueList.append(value4);
-    if (!value5.isNull())
-        valueList.append(value5);
-    setComplexAttribute(category, name, valueList);
-}
-
-void CwLibGroup::setMultivaluedAttribute(AttributeCategory category, QString name, QStringList value)
+void CwLibGroup::setComplexLibAttribute(QString name, QStringList value)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.insert(name, value);
-            break;
-        case UserAttribute:
-            d->m_userAttributes.insert(name, value);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_libAttributes.insert(name, value);
 }
 
-void CwLibGroup::setMultivaluedAttribute(AttributeCategory category, QString name, QString value1,
-                                       QString value2,
-                                       QString value3,
-                                       QString value4,
-                                       QString value5)
-{
-    QStringList valueList;
-    valueList.append(value1);
-    if (!value2.isNull())
-        valueList.append(value2);
-    if (!value3.isNull())
-        valueList.append(value3);
-    if (!value4.isNull())
-        valueList.append(value4);
-    if (!value5.isNull())
-        valueList.append(value5);
-    setMultivaluedAttribute(category, name, valueList);
-}
-
-void CwLibGroup::removeAttribute(AttributeCategory category, QString name)
+void CwLibGroup::setLibDefine(QString name, QStringList value)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.remove(name);
-            break;
-        case UserAttribute:
-            d->m_userAttributes.remove(name);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_libDefines.insertMulti(name, value);
 }
 
-void CwLibGroup::removeAttribute(AttributeCategory category, QString name, QVariant value)
+void CwLibGroup::removeLibAttribute(QString name)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.remove(name, value);
-            break;
-        case UserAttribute:
-            d->m_userAttributes.remove(name, value);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_libAttributes.remove(name);
 }
 
-bool CwLibGroup::hasAttribute(AttributeCategory category, QString name) const
-{
-    switch (category) {
-        case LibAttribute:
-            return d->m_libAttributes.contains(name);
-        case UserAttribute:
-            return d->m_userAttributes.contains(name);
-        default:
-            Q_ASSERT(0);
-    };
-	return false;
-}
-
-QVariant CwLibGroup::attributeValue(AttributeCategory category, QString name) const
-{
-    QVariantList values;
-    switch (category) {
-        case LibAttribute:
-            values = d->m_libAttributes.values(name);
-            break;
-        case UserAttribute:
-            values = d->m_userAttributes.values(name);
-            break;
-        default:
-            Q_ASSERT(0);
-    };
-    if (values.size() == 1) {
-        return values.at(0);
-    }
-    return values;
-}
-
-void CwLibGroup::clearAttributes(AttributeCategory category)
+void CwLibGroup::removeUserAttribute(QString name)
 {
     copyOnWrite();
-    switch (category) {
-        case LibAttribute:
-            d->m_libAttributes.clear();
-            break;
-        case UserAttribute:
-            d->m_userAttributes.clear();
-            break;
-        default:
-            Q_ASSERT(0);
-    };
+	d->m_userAttributes.remove(name);
 }
 
-QStringList CwLibGroup::attributes(AttributeCategory category) const
+void CwLibGroup::removeLibDefine(const QString &name, const QStringList &value)
 {
-    switch (category) {
-        case LibAttribute:
-            return d->m_libAttributes.uniqueKeys();
-            break;
-        case UserAttribute:
-            return d->m_userAttributes.uniqueKeys();
-            break;
-        default:
-            Q_ASSERT(0);
-    };
-    return QStringList();
+    copyOnWrite();
+	d->m_libDefines.remove(name, value);
+}
+
+bool CwLibGroup::hasLibAttribute(QString name) const
+{
+	return d->m_libAttributes.contains(name);
+}
+
+bool CwLibGroup::hasUserAttribute(QString name) const {
+	return d->m_userAttributes.contains(name);
+}
+
+bool CwLibGroup::hasLibDefine(QString name) const {
+	return d->m_libDefines.contains(name);
+}
+
+QStringList CwLibGroup::libAttributeValue(QString name) const
+{
+	if (d->m_libAttributes.contains(name)) {
+		return d->m_libAttributes.value(name).toStringList();
+	}
+	return QStringList();
+}
+
+QString CwLibGroup::userAttributeValue(QString name) const
+{
+	return d->m_userAttributes.value(name);
+}
+
+CwLibGroup::LibAttributeType CwLibGroup::libAttributeType(QString name) const {
+	if (d->m_libAttributes.contains(name)) {
+		switch (d->m_libAttributes.value(name).type()) {
+			case QVariant::StringList:
+				return ComplexLibAttribute;
+			case QVariant::String:
+				return SimpleLibAttribute;
+			default:
+				return UnknownLibAttribute;
+		}
+	}
+	return UnknownLibAttribute;
+}
+
+QList<QStringList> CwLibGroup::libDefineValues(QString name) const
+{
+	return d->m_libDefines.values(name);
+}
+
+void CwLibGroup::clearLibAttributes()
+{
+    copyOnWrite();
+	d->m_libAttributes.clear();
+}
+
+void CwLibGroup::clearLibDefines()
+{
+    copyOnWrite();
+	d->m_libDefines.clear();
+}
+
+QStringList CwLibGroup::libAttributes() const
+{
+    return d->m_libAttributes.keys();
+}
+
+QStringList CwLibGroup::userAttributes() const
+{
+    return d->m_userAttributes.keys();
+}
+
+QStringList CwLibGroup::libDefines() const
+{
+    return d->m_libDefines.uniqueKeys();
 }
 
 int CwLibGroup::subgroupsCount() const
@@ -409,46 +353,27 @@ int CwLibGroup::subgroupsCount() const
     return d->m_subgroups.size();
 }
 
-int CwLibGroup::attributesCount(AttributeCategory category) const
-{
-    switch (category) {
-        case LibAttribute:
-            return d->m_libAttributes.size();
-            break;
-        case UserAttribute:
-            return d->m_userAttributes.size();
-            break;
-        default:
-            Q_ASSERT(0);
-    };
-    return 0;
-}
-
 QString CwLibGroup::toText(const QString &prefix) const
 {
     QString outStr("");
     outStr += prefix + type() +  "(" + name() + ") {\n";
-    QStringList attrs = attributes(LibAttribute);
-    for (int i = 0; i < attrs.size(); i++) {
-        QVariant val = attributeValue(LibAttribute, attrs[i]);
-        QVariantList multiVals;
-        switch (val.type()) {
-        case QMetaType::QString: // simple attribute
-            outStr += prefix + "  " + attrs[i] + " : " + val.toString() + ";\n";
-            break;
-        case QMetaType::QStringList: // complex attribute
-            outStr += prefix + "  " + attrs[i] + "(" + val.toStringList().join(", ") + ");\n";
-            break;
-        case QMetaType::QVariantList: // multivalued complex attribute
-            multiVals = val.toList();
-            for (int j = 0; j < multiVals.size(); j++) {
-                outStr += prefix + "  " + attrs[i] + "(" + multiVals.at(j).toStringList().join(", ") + ");\n";
-            }
-            break;
-        default:
-            break;
-        }
-    }
+    QStringList defines = libDefines();
+    foreach (QString defineCmd, defines) {
+        foreach (QStringList valueList, libDefineValues(defineCmd)) {
+			outStr += prefix + "  " + defineCmd + "(" + valueList.join(", ") + ");\n";
+		}
+	}
+    QStringList attributes = libAttributes();
+    foreach (QString attr, attributes) {
+		QVariant val = libAttributeValue(attr);
+		if (libAttributeType(attr) == SimpleLibAttribute) {
+			outStr += prefix + "  " + attr + "(" + val.toString() + ");\n";
+		} else if (libAttributeType(attr) == ComplexLibAttribute) {
+			outStr += prefix + "  " + attr + "(" + val.toStringList().join(", ") + ");\n";
+		} else {
+			Q_ASSERT(0);
+		}
+	}
     for (int i = 0; i < subgroupsCount(); i++) {
         outStr += subgroupAt(i)->toText(prefix + "  ");
     }

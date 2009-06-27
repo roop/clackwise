@@ -131,11 +131,11 @@ libgroups :           // of type QList<CwLibGroup*>
 							QVariantList attrStatement = statement.toList();
 							QString variableName = attrStatement.at(1).toString();
 							if (attrStatement.at(0).toString() == "simple_attribute") {
-								lg->setSimpleAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toString());
+								lg->setSimpleLibAttribute(variableName, attrStatement.at(2).toString());
 							} else if (attrStatement.at(0).toString() == "complex_attribute") {
-								lg->setComplexAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
-							} else if (attrStatement.at(0).toString() == "multivalued_attribute") {
-								lg->setMultivaluedAttribute(CwLibGroup::LibAttribute, variableName, attrStatement.at(2).toStringList());
+								lg->setComplexLibAttribute(variableName, attrStatement.at(2).toStringList());
+							} else if (attrStatement.at(0).toString() == "define") {
+								lg->setLibDefine(variableName, attrStatement.at(2).toStringList());
 							}
 						}
 					}
@@ -239,11 +239,11 @@ complex_attribute :  // of type QVariantList
          variable   '('   value_list   ')'
          {
 		   	if (QRegExp("define(_group|_cell_area)?").exactMatch($1.toString())) {
-				$$ = QVariantList() << "multivalued_attribute" << $1.toString() << $3.toStringList();
+				$$ = QVariantList() << "define" << $1.toString() << $3.toStringList();
 				QString attrType = $3.toStringList().last();
 				if ($3.toStringList().size() != 3 ||
 					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
-					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
+					$$ = QVariantList() << "define" << $1.toString();
 					printf("Error: define or define_group statement incorrect at line %d"
 					       " of library file %s . The statement was skipped.\n",
 						   CwLibertylineno, qPrintable(libertyFilename));
@@ -256,11 +256,11 @@ complex_attribute :  // of type QVariantList
        | variable   '('   value_list   ')'   ';'
          {
 		   	if (QRegExp("define(_group|_cell_area)?").exactMatch($1.toString())) {
-				$$ = QVariantList() << "multivalued_attribute" << $1.toString() << $3.toStringList();
+				$$ = QVariantList() << "define" << $1.toString() << $3.toStringList();
 				QString attrType = $3.toStringList().last();
 				if ($3.toStringList().size() != 3 ||
 					!QRegExp("(boolean|string|integer|real)").exactMatch(attrType)) {
-					$$ = QVariantList() << "multivalued_attribute" << $1.toString();
+					$$ = QVariantList() << "define" << $1.toString();
 					printf("Error: define or define_group statement incorrect at line %d"
 					       " of library file %s . The statement was skipped.\n",
 						   CwLibertylineno, qPrintable(libertyFilename));

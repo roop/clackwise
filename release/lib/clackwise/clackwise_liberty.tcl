@@ -271,7 +271,7 @@ set ::clackwise_commands(get_lib_cells) {
 	{Get lib cells from memory}
 	{pattern}
 	{
-		{of_objects.arg "" "Cells of which lib"}
+		{of_objects.arg "" "Cells of which lib or pin"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
 	}
@@ -332,7 +332,7 @@ set ::clackwise_commands(get_lib_pins) {
 	{Get lib pins from memory}
 	{pattern}
 	{
-		{of_objects.arg "" "Pins of which lib"}
+		{of_objects.arg "" "Pins of which cell"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
 	}

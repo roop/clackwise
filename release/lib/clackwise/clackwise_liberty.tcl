@@ -246,17 +246,23 @@ proc get_lib_groups {args} {
 	}
 	set pattern ""
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
-		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
-		if {$paramcount == 1} {
-			return [_get_lib_groups $params(type) $pattern $QRegExp_Type $params(of_objects)]
-		} elseif {$paramcount == 2} {
-			error "Error: $::argv0: That's one pattern too many than what I can handle"
-		} else {
-			error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
-		}
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 	} else {
-		error "Error: $::argv0: No patterns specified";
+		if {$params(of_objects) == ""} {
+			error "Error: $::argv0: No patterns specified";
+			return {}
+		} else {
+			set pattern "*"
+			set paramcount 1
+		}
+	}
+	if {$paramcount == 1} {
+		return [_get_lib_groups $params(type) $pattern $QRegExp_Type $params(of_objects)]
+	} elseif {$paramcount == 2} {
+		error "Error: $::argv0: That's one pattern too many than what I can handle"
+	} else {
+		error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
 	}
 	return {};
 }

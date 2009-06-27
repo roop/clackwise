@@ -48,7 +48,7 @@ if {![catch {package require tclreadline}]} {
 			show_objects $::tclreadline::result
 			return no;
 		}
-		return [tclreadline::Print_orig $::tclreadline::result];
+		return yes;
 	}
 	source ${clackwise_root_path}/lib/clackwise/tclreadlineCwCompleter.tcl
 	::tclreadline::readline customcompleter ::tclreadline::cw_completer

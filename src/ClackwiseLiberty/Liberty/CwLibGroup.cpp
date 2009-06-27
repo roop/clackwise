@@ -342,6 +342,19 @@ void CwLibGroup::removeAttribute(AttributeCategory category, QString name, QVari
     };
 }
 
+bool CwLibGroup::hasAttribute(AttributeCategory category, QString name) const
+{
+    switch (category) {
+        case LibAttribute:
+            return d->m_libAttributes.contains(name);
+        case UserAttribute:
+            return d->m_userAttributes.contains(name);
+        default:
+            Q_ASSERT(0);
+    };
+	return false;
+}
+
 QVariant CwLibGroup::attributeValue(AttributeCategory category, QString name) const
 {
     QVariantList values;

@@ -105,6 +105,9 @@ public:
     // this is more relevant for multivalued attributes
     void removeAttribute(AttributeCategory category, QString name, QVariant value);
 
+	// check for an attribute by name
+	bool hasAttribute(AttributeCategory category, QString name) const;
+
     // get the value of an attribute
     // the attribute type can be derived from the return type
     // QString => simple attribute

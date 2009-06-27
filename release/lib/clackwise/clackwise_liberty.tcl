@@ -174,7 +174,7 @@ proc _get_lib_groups {type pattern QRegExp_Type {of ""}} {
 			set patterns [array names pattern_arr]
 		}
 	}
-	set ret {}
+	array set ret {}
 	foreach pat $patterns {
 		set scount_pattern [expr [string length $pat] - \
 							[string length [string map {/ {}} $pat]]]
@@ -210,13 +210,13 @@ proc _get_lib_groups {type pattern QRegExp_Type {of ""}} {
 				}
 			}
 			foreach g $groups {
-				lappend ret $g
+				array set ret "$g 1"
 			}
 		} else {
 			error "Error: $::argv0: Number of '/'s in pattern \"$pattern\" does not match the number of '/'s in type \"$type\". Cannot perform -regexp/-exact match."
 		}
 	}
-	return $ret
+	return [array names ret]
 }
 
 set ::clackwise_commands(get_lib_groups) {

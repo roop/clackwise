@@ -183,30 +183,30 @@ proc _get_lib_groups {type pattern QRegExp_Type {of ""}} {
 		set pl [split $pat /]
 		set tl [split $type /]
 		if {$scount_pattern == $scount_type} {
-			if {$of == "" && [lindex $tl 0] != "lib"} {
-				error "Error: $::argv0: Expecting -type '$type' to start with 'lib'"
-				return {};
-			}
 			set groups $of
 			for {set i 0} {$i < [expr $scount_pattern + 1]} {incr i} {
 				set t [lindex $tl $i]
 				set p [lindex $pl $i]
-				switch -exact $t {
-					lib {
+				if {$groups == ""} {
+					if {$t == "lib"} {
 						set groups [cw_get_libs $p $QRegExp_Type]
-					}
-					default {
-						if {$t == ""} {
-							error "Error: $::argv0: Null subtype specified in lib group type '$type'"
+					} else {
+						if {$i == 0} {
+							error "Error: $::argv0: Expecting -type '$type' to start with 'lib' instead of '$t'"
+							return {};
 						}
-						set next_groups {}
-						foreach g $groups {
-							foreach g2 [CwLibGroup_subgroupsByName $g $t $p $QRegExp_Type] {
-								lappend next_groups $g2
-							}
-						}
-						set groups $next_groups
 					}
+				} else {
+					if {$t == ""} {
+						error "Error: $::argv0: Null subtype specified in lib group type '$type'"
+					}
+					set next_groups {}
+					foreach g $groups {
+						foreach g2 [CwLibGroup_subgroupsByName $g $t $p $QRegExp_Type] {
+							lappend next_groups $g2
+						}
+					}
+					set groups $next_groups
 				}
 			}
 			foreach g $groups {

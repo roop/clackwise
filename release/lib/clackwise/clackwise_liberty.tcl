@@ -282,37 +282,42 @@ proc get_lib_cells {args} {
 	} elseif {$params(exact)} {
 		set QRegExp_Type $::QRegExp_FixedString
 	}
-	set pattern ""
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
-		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 		set pattern [lindex $params(__NON_SWITCH_ARGS__) 0]
-		if {$paramcount == 1} {
-			if {$params(of_objects) == ""} {
-				return [_get_lib_groups "lib/cell" $pattern $QRegExp_Type]
-			} else {
-				set of_objects_type [CwLibGroup_type [lindex $params(of_objects) 0]]
-				if {$of_objects_type == "library"} {
-					return [_get_lib_groups "cell" $pattern $QRegExp_Type $params(of_objects)]
-				} elseif {$of_objects_type == "pin"} {
-					set parents {}
-					foreach p $params(of_objects) {
-						set parent [lindex [CwLibGroup_parents $p] 0]
-						if {[CwLibGroup_type $parent] == "cell"} {
-							lappend parents $parent
-						}
-					}
-					return $parents
-				} else {
-					error "Error: $::argv0: Expected object of type 'library' or 'pin' but got '$of_objects_type' for -of_objects";
-				}
-			}
-		} elseif {$paramcount == 2} {
-			error "Error: $::argv0: That's one pattern too many than what I can handle"
-		} else {
-			error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
-		}
+		set paramcount [llength $params(__NON_SWITCH_ARGS__)]
 	} else {
-		error "Error: $::argv0: No patterns specified";
+		if {$params(of_objects) == ""} {
+			error "Error: $::argv0: No patterns specified";
+			return {}
+		} else {
+			set pattern "*"
+			set paramcount 1
+		}
+	}
+	if {$paramcount == 1} {
+		if {$params(of_objects) == ""} {
+			return [_get_lib_groups "lib/cell" $pattern $QRegExp_Type]
+		} else {
+			set of_objects_type [CwLibGroup_type [lindex $params(of_objects) 0]]
+			if {$of_objects_type == "library"} {
+				return [_get_lib_groups "cell" $pattern $QRegExp_Type $params(of_objects)]
+			} elseif {$of_objects_type == "pin"} {
+				array set parents {}
+				foreach p $params(of_objects) {
+					set parent [lindex [CwLibGroup_parents $p] 0]
+					if {[CwLibGroup_type $parent] == "cell"} {
+						array set parents "$parent 1"
+					}
+				}
+				return [array names parents]
+			} else {
+				error "Error: $::argv0: Expected object of type 'library' or 'pin' but got '$of_objects_type' for -of_objects";
+			}
+		}
+	} elseif {$paramcount == 2} {
+		error "Error: $::argv0: That's one pattern too many than what I can handle"
+	} else {
+		error "Error: $::argv0: That's [expr $paramcount - 1] patterns too many than what I can handle"
 	}
 	return {};
 }

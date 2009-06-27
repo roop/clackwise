@@ -383,3 +383,31 @@ proc get_lib_pins {args} {
 	}
 	return {};
 }
+
+set ::clackwise_commands(get_lib_attribute) {
+	{Query lib attributes}
+	{object attribute}
+	{
+		{quiet "Don't report any errors or warnings"}
+	}
+}
+proc get_lib_attribute {args} {
+	set ::argv0 "get_lib_attribute"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 2} {
+		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
+		if {[CwLibGroup_hasLibAttribute $object $attribute]} {
+			return [CwLibGroup_libAttributeValue $object $attribute]
+		} else {
+			if {!$params(quiet)} {
+				error "Error: $::argv0: No such attribute: '$attribute'"
+			}
+		}
+	} else {
+		error "Error: $::argv0: Insufficient number of arguments. Try -help."
+	}
+}

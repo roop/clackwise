@@ -61,6 +61,16 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
         }
         Tcl_SetObjResult(interp, listObj);
     }
+
+    %typemap(out) QList<QString>, QStringList {
+        Tcl_Obj *listObj = Tcl_NewListObj(0, 0);
+        QList<QString> l = QList<QString>($1);
+        for (int i = 0; i < l.size(); i++) {
+            Tcl_Obj *elemObj = Tcl_NewStringObj(((char *) l.at(i).toAscii().data()), -1);
+            Tcl_ListObjAppendElement(interp, listObj, elemObj);
+        }
+        Tcl_SetObjResult(interp, listObj);
+    }
 #endif
 
 

@@ -229,10 +229,10 @@ QList<CwLibGroup*> CwLibGroup::subgroupsBySequence(const QString &typeSequence, 
     return ret;
 }
 
-void CwLibGroup::setSimpleAttribute(AttributeType type, QString name, QString value)
+void CwLibGroup::setSimpleAttribute(AttributeCategory category, QString name, QString value)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.replace(name, value);
             break;
@@ -244,10 +244,10 @@ void CwLibGroup::setSimpleAttribute(AttributeType type, QString name, QString va
     };
 }
 
-void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QStringList value)
+void CwLibGroup::setComplexAttribute(AttributeCategory category, QString name, QStringList value)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.replace(name, value);
             break;
@@ -259,7 +259,7 @@ void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QStringLi
     };
 }
 
-void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QString value1,
+void CwLibGroup::setComplexAttribute(AttributeCategory category, QString name, QString value1,
                                    QString value2,
                                    QString value3,
                                    QString value4,
@@ -275,13 +275,13 @@ void CwLibGroup::setComplexAttribute(AttributeType type, QString name, QString v
         valueList.append(value4);
     if (!value5.isNull())
         valueList.append(value5);
-    setComplexAttribute(type, name, valueList);
+    setComplexAttribute(category, name, valueList);
 }
 
-void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QStringList value)
+void CwLibGroup::setMultivaluedAttribute(AttributeCategory category, QString name, QStringList value)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.insert(name, value);
             break;
@@ -293,7 +293,7 @@ void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QStri
     };
 }
 
-void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QString value1,
+void CwLibGroup::setMultivaluedAttribute(AttributeCategory category, QString name, QString value1,
                                        QString value2,
                                        QString value3,
                                        QString value4,
@@ -309,13 +309,13 @@ void CwLibGroup::setMultivaluedAttribute(AttributeType type, QString name, QStri
         valueList.append(value4);
     if (!value5.isNull())
         valueList.append(value5);
-    setMultivaluedAttribute(type, name, valueList);
+    setMultivaluedAttribute(category, name, valueList);
 }
 
-void CwLibGroup::removeAttribute(AttributeType type, QString name)
+void CwLibGroup::removeAttribute(AttributeCategory category, QString name)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.remove(name);
             break;
@@ -327,10 +327,10 @@ void CwLibGroup::removeAttribute(AttributeType type, QString name)
     };
 }
 
-void CwLibGroup::removeAttribute(AttributeType type, QString name, QVariant value)
+void CwLibGroup::removeAttribute(AttributeCategory category, QString name, QVariant value)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.remove(name, value);
             break;
@@ -342,10 +342,10 @@ void CwLibGroup::removeAttribute(AttributeType type, QString name, QVariant valu
     };
 }
 
-QVariant CwLibGroup::attributeValue(AttributeType type, QString name) const
+QVariant CwLibGroup::attributeValue(AttributeCategory category, QString name) const
 {
     QVariantList values;
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             values = d->m_libAttributes.values(name);
             break;
@@ -361,10 +361,10 @@ QVariant CwLibGroup::attributeValue(AttributeType type, QString name) const
     return values;
 }
 
-void CwLibGroup::clearAttributes(AttributeType type)
+void CwLibGroup::clearAttributes(AttributeCategory category)
 {
     copyOnWrite();
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             d->m_libAttributes.clear();
             break;
@@ -376,9 +376,9 @@ void CwLibGroup::clearAttributes(AttributeType type)
     };
 }
 
-QStringList CwLibGroup::attributes(AttributeType type) const
+QStringList CwLibGroup::attributes(AttributeCategory category) const
 {
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             return d->m_libAttributes.uniqueKeys();
             break;
@@ -396,9 +396,9 @@ int CwLibGroup::subgroupsCount() const
     return d->m_subgroups.size();
 }
 
-int CwLibGroup::attributesCount(AttributeType type) const
+int CwLibGroup::attributesCount(AttributeCategory category) const
 {
-    switch (type) {
+    switch (category) {
         case LibAttribute:
             return d->m_libAttributes.size();
             break;

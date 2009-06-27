@@ -188,11 +188,11 @@ proc _get_lib_groups {type pattern QRegExp_Type {of ""}} {
 				set t [lindex $tl $i]
 				set p [lindex $pl $i]
 				if {$groups == ""} {
-					if {$t == "lib"} {
+					if {$t == "library"} {
 						set groups [cw_get_libs $p $QRegExp_Type]
 					} else {
 						if {$i == 0} {
-							error "Error: $::argv0: Expecting -type '$type' to start with 'lib' instead of '$t'"
+							error "Error: $::argv0: Expecting -type '$type' to start with 'library' instead of '$t'"
 							return {};
 						}
 					}
@@ -223,7 +223,7 @@ set ::clackwise_commands(get_lib_groups) {
 	{Get lib groups from memory}
 	{pattern}
 	{
-		{type.arg "no default" "Lib group type (eg. lib/cell, lib/cell/pin/timing)"}
+		{type.arg "no default" "Lib group type (eg. library/cell, library/cell/pin/timing)"}
 		{of_objects.arg "" "Lib group of which object"}
 		{regexp "Match pattern as regular expression"}
 		{exact "Match pattern as exact string"}
@@ -302,7 +302,7 @@ proc get_lib_cells {args} {
 	}
 	if {$paramcount == 1} {
 		if {$params(of_objects) == ""} {
-			return [_get_lib_groups "lib/cell" $pattern $QRegExp_Type]
+			return [_get_lib_groups "library/cell" $pattern $QRegExp_Type]
 		} else {
 			set of_objects_type [CwLibGroup_type [lindex $params(of_objects) 0]]
 			if {$of_objects_type == "library"} {

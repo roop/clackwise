@@ -416,6 +416,8 @@ set ::clackwise_commands(set_lib_attribute) {
 	{Set a simple lib attribute}
 	{object attribute value}
 	{
+		{simple "Force attribute to be a simple attribute"}
+		{complex "Force attribute to be a complex attribute"}
 	}
 }
 proc set_lib_attribute {args} {
@@ -428,7 +430,21 @@ proc set_lib_attribute {args} {
 		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
 		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
 		set value [lindex $params(__NON_SWITCH_ARGS__) 2]
-		CwLibGroup_setSimpleLibAttribute $object $attribute $value
+		set type ""
+		if {$params(simple)} { set type "simple" }
+		if {$params(complex)} { set type "complex" }
+		if {$type == ""} {
+			set type "complex"
+			if {[llength $value] == 1} {
+				set type "simple"
+			}
+		}
+		if {$type == "simple"} {
+			CwLibGroup_setSimpleLibAttribute $object $attribute $value
+		} else {
+			CwLibGroup_setComplexLibAttribute $object $attribute $value
+		}
+		return $value
 	} else {
 		error "Error: $::argv0: Incorrect number of arguments. Try -help."
 	}

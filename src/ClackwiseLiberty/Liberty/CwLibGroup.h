@@ -49,7 +49,7 @@ public:
         Group
     };
 
-    CwLibGroup(QString type = "", QString name = "");
+    CwLibGroup(const QString& type = "", const QString& name = "");
     ~CwLibGroup();
     CwLibGroup(const CwLibGroup &other);
     CwLibGroup& operator=(const CwLibGroup &other);
@@ -57,11 +57,11 @@ public:
     QList<CwLibGroup*> parents() const;
 
     // type, like bus in bus(w[1])
-    void setType(QString type);
+    void setType(const QString& type);
     QString type() const;
 
     // name, like w[1] in bus(w[1])
-    void setName(QString name);
+    void setName(const QString& name);
     QString name() const;
     QString fullName() const;
 
@@ -76,42 +76,42 @@ public:
 
     // set a simple attribute
     // any existing attribute of the same name will be replaced
-    void setSimpleLibAttribute(QString name, QString value);
-    void setUserAttribute(QString name, QString value);
+    void setSimpleLibAttribute(const QString& name, const QString& value);
+    void setUserAttribute(const QString& name, const QString& value);
 
     // set a complex attribute
     // any existing attribute of the same name will be replaced
-    void setComplexLibAttribute(QString name, QStringList value);
+    void setComplexLibAttribute(const QString& name, const QStringList& value);
 
     // set a multivalued complex attribute
     // all existing attributes of the same name will be kept
     // this is to support attributes like define, define_group,
     // which can occur multiple times legally
-    void setLibDefine(QString name, QStringList value);
+    void setLibDefine(const QString& name, const QStringList& value);
 
     // remove an attribute
-    void removeLibAttribute(QString name);
-    void removeUserAttribute(QString name);
+    void removeLibAttribute(const QString& name);
+    void removeUserAttribute(const QString& name);
 
     // remove a define or define_group special complex attribute
     void removeLibDefine(const QString &name, const QStringList &value);
 
 	// check for an attribute by name
-	bool hasLibAttribute(QString name) const;
-	bool hasUserAttribute(QString name) const;
-	bool hasLibDefine(QString name) const;
+	bool hasLibAttribute(const QString& name) const;
+	bool hasUserAttribute(const QString& name) const;
+	bool hasLibDefine(const QString& name) const;
 
     // get the value of an attribute
-    QStringList libAttributeValue(QString name) const;
-    QString userAttributeValue(QString name) const;
+    QStringList libAttributeValue(const QString& name) const;
+    QString userAttributeValue(const QString& name) const;
 
     // query whether it's a simple attribute, or a complex attribute
 	// note that even if libAttributeValue() returns a list with a single item,
 	// it might be a complex attribute
-    LibAttributeType libAttributeType(QString name) const;
+    LibAttributeType libAttributeType(const QString& name) const;
 
     // get the value of defines
-	QList<QStringList> libDefineValues(QString name) const;
+	QList<QStringList> libDefineValues(const QString& name) const;
 
     // remove all attributes
     void clearLibAttributes();

@@ -60,7 +60,7 @@ public:
     int refCount;
 };
 
-CwLibGroup::CwLibGroup(QString type, QString name)
+CwLibGroup::CwLibGroup(const QString& type, const QString& name)
         : d(new Private(type, name))
 {
 }
@@ -139,7 +139,7 @@ void CwLibGroup::copyOnWrite()
     }
 }
 
-void CwLibGroup::setType(QString type)
+void CwLibGroup::setType(const QString& type)
 {
     copyOnWrite();
     d->m_type = type;
@@ -150,7 +150,7 @@ QString CwLibGroup::type() const
     return d->m_type;
 }
 
-void CwLibGroup::setName(QString name)
+void CwLibGroup::setName(const QString& name)
 {
     copyOnWrite();
     d->m_name = name;
@@ -234,37 +234,37 @@ QList<CwLibGroup*> CwLibGroup::subgroupsBySequence(const QString &typeSequence, 
     return ret;
 }
 
-void CwLibGroup::setSimpleLibAttribute(QString name, QString value)
+void CwLibGroup::setSimpleLibAttribute(const QString& name, const QString& value)
 {
     copyOnWrite();
 	d->m_libAttributes.insert(name, value);
 }
 
-void CwLibGroup::setUserAttribute(QString name, QString value)
+void CwLibGroup::setUserAttribute(const QString& name, const QString& value)
 {
     copyOnWrite();
 	d->m_userAttributes.insert(name, value);
 }
 
-void CwLibGroup::setComplexLibAttribute(QString name, QStringList value)
+void CwLibGroup::setComplexLibAttribute(const QString& name, const QStringList& value)
 {
     copyOnWrite();
 	d->m_libAttributes.insert(name, value);
 }
 
-void CwLibGroup::setLibDefine(QString name, QStringList value)
+void CwLibGroup::setLibDefine(const QString& name, const QStringList& value)
 {
     copyOnWrite();
 	d->m_libDefines.insertMulti(name, value);
 }
 
-void CwLibGroup::removeLibAttribute(QString name)
+void CwLibGroup::removeLibAttribute(const QString& name)
 {
     copyOnWrite();
 	d->m_libAttributes.remove(name);
 }
 
-void CwLibGroup::removeUserAttribute(QString name)
+void CwLibGroup::removeUserAttribute(const QString& name)
 {
     copyOnWrite();
 	d->m_userAttributes.remove(name);
@@ -276,20 +276,20 @@ void CwLibGroup::removeLibDefine(const QString &name, const QStringList &value)
 	d->m_libDefines.remove(name, value);
 }
 
-bool CwLibGroup::hasLibAttribute(QString name) const
+bool CwLibGroup::hasLibAttribute(const QString& name) const
 {
 	return d->m_libAttributes.contains(name);
 }
 
-bool CwLibGroup::hasUserAttribute(QString name) const {
+bool CwLibGroup::hasUserAttribute(const QString& name) const {
 	return d->m_userAttributes.contains(name);
 }
 
-bool CwLibGroup::hasLibDefine(QString name) const {
+bool CwLibGroup::hasLibDefine(const QString& name) const {
 	return d->m_libDefines.contains(name);
 }
 
-QStringList CwLibGroup::libAttributeValue(QString name) const
+QStringList CwLibGroup::libAttributeValue(const QString& name) const
 {
 	if (d->m_libAttributes.contains(name)) {
 		return d->m_libAttributes.value(name).toStringList();
@@ -297,12 +297,12 @@ QStringList CwLibGroup::libAttributeValue(QString name) const
 	return QStringList();
 }
 
-QString CwLibGroup::userAttributeValue(QString name) const
+QString CwLibGroup::userAttributeValue(const QString& name) const
 {
 	return d->m_userAttributes.value(name);
 }
 
-CwLibGroup::LibAttributeType CwLibGroup::libAttributeType(QString name) const {
+CwLibGroup::LibAttributeType CwLibGroup::libAttributeType(const QString& name) const {
 	if (d->m_libAttributes.contains(name)) {
 		switch (d->m_libAttributes.value(name).type()) {
 			case QVariant::StringList:
@@ -316,7 +316,7 @@ CwLibGroup::LibAttributeType CwLibGroup::libAttributeType(QString name) const {
 	return UnknownLibAttribute;
 }
 
-QList<QStringList> CwLibGroup::libDefineValues(QString name) const
+QList<QStringList> CwLibGroup::libDefineValues(const QString& name) const
 {
 	return d->m_libDefines.values(name);
 }

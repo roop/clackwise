@@ -71,6 +71,32 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
         }
         Tcl_SetObjResult(interp, listObj);
     }
+    %typemap(in) QList<QString>, QStringList {
+        int listLength;
+        Tcl_Obj **listObjects;
+        if (Tcl_ListObjGetElements(interp, $input, &listLength, &listObjects) == TCL_OK) {
+            for (int i = 0; i < listLength; ++i) {
+                int strLength;
+                char *str = Tcl_GetStringFromObj(listObjects[i], &strLength);
+                $1 << QString(str);
+            }
+        }
+    }
+    %typemap(in) QList<QString> *, QStringList *, QList<QString> &, QStringList & {
+        int listLength;
+        Tcl_Obj **listObjects;
+        $1 = new QStringList();
+        if (Tcl_ListObjGetElements(interp, $input, &listLength, &listObjects) == TCL_OK) {
+            for (int i = 0; i < listLength; ++i) {
+                int strLength;
+                char *str = Tcl_GetStringFromObj(listObjects[i], &strLength);
+                $1->append(QString(str));
+            }
+        }
+    }
+    %typemap(freearg) QList<QString> *, QStringList *, QList<QString> &, QStringList & {
+        delete $1;
+    }
 #endif
 
 

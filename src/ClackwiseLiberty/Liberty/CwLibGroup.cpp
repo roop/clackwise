@@ -367,7 +367,7 @@ QString CwLibGroup::toText(const QString &prefix) const
     foreach (QString attr, attributes) {
 		QVariant val = libAttributeValue(attr);
 		if (libAttributeType(attr) == SimpleLibAttribute) {
-			outStr += prefix + "  " + attr + "(" + val.toString() + ");\n";
+			outStr += prefix + "  " + attr + " : " + val.toString() + ";\n";
 		} else if (libAttributeType(attr) == ComplexLibAttribute) {
 			outStr += prefix + "  " + attr + "(" + val.toStringList().join(", ") + ");\n";
 		} else {

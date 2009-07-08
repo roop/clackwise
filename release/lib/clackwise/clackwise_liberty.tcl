@@ -450,6 +450,30 @@ proc set_lib_attribute {args} {
 	}
 }
 
+set ::clackwise_commands(has_lib_attribute) {
+	{Does the lib attribute exist?}
+	{object attribute}
+	{
+	}
+}
+proc has_lib_attribute {args} {
+	set ::argv0 "has_lib_attribute"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 2} {
+		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
+		if {[CwLibGroup_hasLibAttribute $object $attribute]} {
+            return true
+        }
+        return false
+	} else {
+		error "Error: $::argv0: Incorrect number of arguments. Try -help."
+	}
+}
+
 set ::clackwise_commands(get_user_attribute) {
 	{Query a user attribute}
 	{object attribute}
@@ -496,6 +520,30 @@ proc set_user_attribute {args} {
 		set value [lindex $params(__NON_SWITCH_ARGS__) 2]
 		CwLibGroup_setUserAttribute $object $attribute $value
 		return $value
+	} else {
+		error "Error: $::argv0: Incorrect number of arguments. Try -help."
+	}
+}
+
+set ::clackwise_commands(has_user_attribute) {
+	{Does the user attribute exist?}
+	{object attribute}
+	{
+	}
+}
+proc has_user_attribute {args} {
+	set ::argv0 "has_user_attribute"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 2} {
+		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
+		if {[CwLibGroup_hasUserAttribute $object $attribute]} {
+            return true
+        }
+        return false
 	} else {
 		error "Error: $::argv0: Incorrect number of arguments. Try -help."
 	}

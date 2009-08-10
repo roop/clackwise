@@ -548,3 +548,46 @@ proc has_user_attribute {args} {
 		error "Error: $::argv0: Incorrect number of arguments. Try -help."
 	}
 }
+
+set ::clackwise_commands(list_lib_attributes) {
+	{Get a list of all lib attributes}
+	{object}
+	{
+	}
+}
+proc list_lib_attributes {args} {
+	set ::argv0 "list_lib_attributes"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 1} {
+		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
+		return [CwLibGroup_libAttributes $object]
+	} else {
+		error "Error: $::argv0: Incorrect number of arguments. Try -help."
+	}
+}
+
+set ::clackwise_commands(list_user_attributes) {
+	{Get a list of all user attributes}
+	{object}
+	{
+	}
+}
+proc list_user_attributes {args} {
+	set ::argv0 "list_user_attributes"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 1} {
+		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
+		set attribute [lindex $params(__NON_SWITCH_ARGS__) 1]
+		return [CwLibGroup_userAttributes $object]
+	} else {
+		error "Error: $::argv0: Incorrect number of arguments. Try -help."
+	}
+}
+

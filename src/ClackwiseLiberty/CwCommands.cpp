@@ -34,6 +34,15 @@ CwLib* cw_read_lib(const QString &filename) {
     return dotlib;
 }
 
+CwLib* cw_create_lib(const QString &name) {
+    if (name.isEmpty()) {
+        return 0;
+    }
+    CwLib* dotlib = new CwLib(name);
+    CwTroves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
+    return dotlib;
+}
+
 QList<CwLib*> cw_get_libs(const QString &pattern, int patternSyntax) {
     QList<CwLib*> l = CwTroves::instance()->currentLibTrove()->retrieve(pattern, QRegExp::PatternSyntax(patternSyntax));
     return l;

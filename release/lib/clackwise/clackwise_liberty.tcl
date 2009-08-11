@@ -109,6 +109,32 @@ proc read_lib {args} {
 	return "";
 }
 
+set ::clackwise_commands(create_lib) {
+	{Create a new lib in memory}
+	{}
+	{
+		{name.arg "no default" "Lib name"}
+	}
+}
+proc create_lib {args} {
+	set ::argv0 "create_lib"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {($params(name) == "no default") || ($params(name) == "")} {
+		error "Error: $::argv0: -name is required"
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
+    }
+    set lib [cw_create_lib $params(name)]
+    if {[CwLibGroup_name $lib] == ""} {
+        return ""
+    }
+	return $lib
+}
+
 set ::clackwise_commands(get_libs) {
 	{Get libs from memory}
 	{pattern}

@@ -52,7 +52,7 @@ proc help {args} {
 	set params(verbose) 0
 	array set params [::cmdline::getoptions args $options "$usage # $summary"]
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
-		set commands [array names ::clackwise_commands]
+		set commands [lsort [array names ::clackwise_commands]]
 		foreach pattern $params(__NON_SWITCH_ARGS__) {
 			foreach i [lsearch -glob -all $commands $pattern] {
 				set command [lindex $commands $i]

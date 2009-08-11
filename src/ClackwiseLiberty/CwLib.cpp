@@ -26,11 +26,13 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Clackwise {
 
-CwLib::CwLib(const QString& filename)
+CwLib::CwLib()
 {
-	if (!filename.isNull()) {
-		read(filename);
-	}
+}
+
+CwLib::CwLib(const QString& name)
+{
+    CwLibGroup::setName(name);
 }
 
 CwLib::~CwLib()

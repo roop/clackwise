@@ -30,7 +30,8 @@ class CwLib
 	: public CwLibGroup
 {
 public:
-	CwLib(const QString& filename=QString());
+	CwLib();
+	CwLib(const QString& name);
 	~CwLib();
 	CwLib(const CwLib &other);
 	CwLib& operator=(const CwLib & other);

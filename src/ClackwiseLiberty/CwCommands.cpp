@@ -43,6 +43,13 @@ CwLib* cw_create_lib(const QString &name) {
     return dotlib;
 }
 
+Clackwise::CwLibGroup* cw_create_lib_group(CwLibGroup* parent,
+                        const QString& type, const QString &name) {
+    CwLibGroup *lg = new CwLibGroup(type, name);
+    parent->addSubgroup(lg);
+    return lg;
+}
+
 QList<CwLib*> cw_get_libs(const QString &pattern, int patternSyntax) {
     QList<CwLib*> l = CwTroves::instance()->currentLibTrove()->retrieve(pattern, QRegExp::PatternSyntax(patternSyntax));
     return l;

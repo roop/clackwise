@@ -135,6 +135,40 @@ proc create_lib {args} {
 	return $lib
 }
 
+set ::clackwise_commands(create_lib_group) {
+	{Create a new lib_group in memory}
+	{}
+	{
+		{parent.arg "no default" "parent lib_group (eg. [lindex 0 [get_lib_cells *]])"}
+		{type.arg "no default" "lib_group type (eg. pin)"}
+		{name.arg "no default" "lib_group name (eg. clk)"}
+	}
+}
+proc create_lib_group {args} {
+	set ::argv0 "create_lib_group"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {($params(parent) == "no default") || ($params(parent) == "")} {
+		error "Error: $::argv0: -parent is required"
+	}
+	if {($params(type) == "no default") || ($params(type) == "")} {
+		error "Error: $::argv0: -type is required"
+	}
+	if {($params(name) == "no default") || ($params(name) == "")} {
+		error "Error: $::argv0: -name is required"
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
+    }
+    set lib [cw_create_lib_group $params(parent) $params(type) $params(name)]
+    if {[CwLibGroup_name $lib] == ""} {
+        return ""
+    }
+	return $lib
+}
+
 set ::clackwise_commands(get_libs) {
 	{Get libs from memory}
 	{pattern}

@@ -473,7 +473,7 @@ proc get_lib_attribute {args} {
 }
 
 set ::clackwise_commands(set_lib_attribute) {
-	{Set a simple lib attribute}
+	{Set a lib attribute}
 	{object attribute value}
 	{
 		{simple "Force attribute to be a simple attribute"}

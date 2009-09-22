@@ -53,6 +53,7 @@ public:
     ~CwLibGroup();
     CwLibGroup(const CwLibGroup &other);
     CwLibGroup& operator=(const CwLibGroup &other);
+    CwLibGroup* clone() const;
 
     QList<CwLibGroup*> parents() const;
 

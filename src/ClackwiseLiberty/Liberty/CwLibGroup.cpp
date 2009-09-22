@@ -20,6 +20,7 @@ version 2.1 along with Clackwise.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QStringList>
+#include <QVariant>
 #include <QDebug>
 
 #include "Liberty/CwLibGroup.h"
@@ -79,6 +80,29 @@ CwLibGroup& CwLibGroup::operator=(const CwLibGroup & other)
         ref();
     }
     return *this;
+}
+
+CwLibGroup* CwLibGroup::clone() const {
+    CwLibGroup *cloned = new CwLibGroup(type(), name());
+    // copy lib attributes
+    QHash<QString, QVariant>::const_iterator libAttrIter;
+    for (libAttrIter = d->m_libAttributes.constBegin(); libAttrIter != d->m_libAttributes.constEnd(); ++libAttrIter) {
+        if (libAttrIter.value().canConvert(QVariant::StringList)) {
+            cloned->setComplexLibAttribute(libAttrIter.key(), libAttrIter.value().toStringList());
+        } else {
+            cloned->setSimpleLibAttribute(libAttrIter.key(), libAttrIter.value().toString());
+        }
+    }
+    // copy lib defines
+    QMultiHash<QString, QStringList>::const_iterator libDefIter;
+    for (libDefIter = d->m_libDefines.constBegin(); libDefIter != d->m_libDefines.constEnd(); ++libDefIter) {
+        cloned->setLibDefine(libAttrIter.key(), libAttrIter.value().toStringList());
+    }
+    // clone subgroups
+    foreach(CwLibGroup *sg, d->m_subgroups) {
+        cloned->addSubgroup(sg->clone());
+    }
+    return cloned;
 }
 
 QList<CwLibGroup*> CwLibGroup::parents() const {

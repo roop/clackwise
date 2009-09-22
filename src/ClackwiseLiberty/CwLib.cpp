@@ -50,6 +50,10 @@ CwLib& CwLib::operator=(const CwLib & other)
 	return *this;
 }
 
+CwLib* CwLib::clone() const {
+    return (CwLib*) CwLibGroup::clone();
+}
+
 bool CwLib::read(const QString& filename)
 {
     CwLibGroup* lg = parseLiberty(filename);

@@ -114,6 +114,7 @@ set ::clackwise_commands(create_lib) {
 	{}
 	{
 		{name.arg "no default" "Lib name"}
+		{clone_from.arg "no default" "Lib object"}
 	}
 }
 proc create_lib {args} {
@@ -128,7 +129,11 @@ proc create_lib {args} {
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
     }
-    set lib [cw_create_lib $params(name)]
+	if {($params(clone_from) == "no default") || ($params(clone_from) == "")} {
+        set lib [cw_create_lib $params(name)]
+    } else {
+        set lib [cw_clone_lib $params(clone_from) $params(name)]
+    }
     if {[CwLibGroup_name $lib] == ""} {
         return ""
     }

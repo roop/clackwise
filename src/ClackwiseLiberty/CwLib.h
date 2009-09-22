@@ -35,6 +35,7 @@ public:
 	~CwLib();
 	CwLib(const CwLib &other);
 	CwLib& operator=(const CwLib & other);
+    CwLib *clone() const;
 	bool read(const QString& filename);
 	bool write(const QString& filename);
 };

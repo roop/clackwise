@@ -43,6 +43,16 @@ CwLib* cw_create_lib(const QString &name) {
     return dotlib;
 }
 
+CwLib* cw_clone_lib(CwLib* src, const QString &name) {
+    if (name.isEmpty()) {
+        return 0;
+    }
+    CwLib* dotlib = src->clone();
+    dotlib->setName(name);
+    CwTroves::instance()->currentLibTrove()->store(dotlib->name(), dotlib);
+    return dotlib;
+}
+
 Clackwise::CwLibGroup* cw_create_lib_group(CwLibGroup* parent,
                         const QString& type, const QString &name) {
     CwLibGroup *lg = new CwLibGroup(type, name);

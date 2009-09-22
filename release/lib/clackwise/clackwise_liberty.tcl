@@ -144,9 +144,10 @@ set ::clackwise_commands(create_lib_group) {
 	{Create a new lib_group in memory}
 	{}
 	{
-		{parent.arg "no default" "parent lib_group (eg. [lindex 0 [get_lib_cells *]])"}
+		{parent.arg "no default" "lib_group object (eg. [lindex 0 [get_lib_cells *]])"}
 		{type.arg "no default" "lib_group type (eg. pin)"}
 		{name.arg "no default" "lib_group name (eg. clk)"}
+		{clone_from.arg "no default" "lib_group object (eg. [lindex 0 [get_lib_cells *]])"}
 	}
 }
 proc create_lib_group {args} {
@@ -158,19 +159,26 @@ proc create_lib_group {args} {
 	if {($params(parent) == "no default") || ($params(parent) == "")} {
 		error "Error: $::argv0: -parent is required"
 	}
-	if {($params(type) == "no default") || ($params(type) == "")} {
-		error "Error: $::argv0: -type is required"
-	}
-	if {($params(name) == "no default") || ($params(name) == "")} {
-		error "Error: $::argv0: -name is required"
+	if {($params(clone_from) == "no default") || ($params(clone_from) == "")} {
+		if {($params(type) == "no default") || ($params(type) == "")} {
+			error "Error: $::argv0: -type is required"
+		}
+		if {($params(name) == "no default") || ($params(name) == "")} {
+			error "Error: $::argv0: -name is required"
+		}
 	}
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
     }
-    set lib [cw_create_lib_group $params(parent) $params(type) $params(name)]
-    if {[CwLibGroup_name $lib] == ""} {
-        return ""
-    }
+	if {($params(clone_from) == "no default") || ($params(clone_from) == "")} {
+		set lib [cw_create_lib_group $params(parent) $params(type) $params(name)]
+	} else {
+		set lib [CwLibGroup_clone $params(clone_from)]
+		CwLibGroup_addSubgroup $params(parent) $lib
+	}
+	if {[CwLibGroup_name $lib] == ""} {
+		return ""
+	}
 	return $lib
 }
 

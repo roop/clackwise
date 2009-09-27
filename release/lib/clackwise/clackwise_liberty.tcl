@@ -129,8 +129,11 @@ proc create_lib {args} {
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
     }
-	if {($params(clone_from) == "no default") || ($params(clone_from) == "")} {
+	if {($params(clone_from) == "no default")} {
         set lib [cw_create_lib $params(name)]
+	} elseif {($params(clone_from) == "")} {
+		error "Error: $::argv0: Can't clone from empty lib object"
+        return ""
     } else {
         set lib [cw_clone_lib $params(clone_from) $params(name)]
     }
@@ -159,14 +162,17 @@ proc create_lib_group {args} {
 	if {($params(parent) == "no default") || ($params(parent) == "")} {
 		error "Error: $::argv0: -parent is required"
 	}
-	if {($params(clone_from) == "no default") || ($params(clone_from) == "")} {
+	if {($params(clone_from) == "no default")} {
 		if {($params(type) == "no default") || ($params(type) == "")} {
 			error "Error: $::argv0: -type is required"
 		}
 		if {($params(name) == "no default") || ($params(name) == "")} {
 			error "Error: $::argv0: -name is required"
 		}
-	}
+	} elseif {($params(clone_from) == "")} {
+		error "Error: $::argv0: Can't clone from empty lib object"
+        return ""
+    }
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
     }

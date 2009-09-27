@@ -129,6 +129,9 @@ proc create_lib {args} {
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
 		error "Error: $::argv0: Unrecognized extra argument: $params(__NON_SWITCH_ARGS__)"
     }
+    if {[get_libs $params(name)] != ""} {
+		error "Error: $::argv0: A lib with name $params(name) already exists in this trove"
+    }
 	if {($params(clone_from) == "no default")} {
         set lib [cw_create_lib $params(name)]
 	} elseif {($params(clone_from) == "")} {

@@ -673,3 +673,30 @@ proc list_user_attributes {args} {
 	}
 }
 
+set ::clackwise_commands(write_lib) {
+	{Write a lib object to a .lib file}
+	{lib_object}
+	{
+		{output_file.arg "no default" "filename"}
+	}
+}
+proc write_lib {args} {
+	set ::argv0 "write_lib"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {($params(output_file) == "no default") || ($params(output_file) == "")} {
+        puts "of = $params(output_file)"
+		error "Error: $::argv0: -output_file is required"
+	}
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 1} {
+		set object lib_object[lindex $params(__NON_SWITCH_ARGS__) 0]
+        if {$object != ""} {
+		    error "Error: $::argv0: Can't write an empty lib object"
+        }
+		return [cw_write_lib $object $params(output_file)]
+	} else {
+		error "Error: $::argv0: Incorrect number of arguments. Try -help."
+	}
+}

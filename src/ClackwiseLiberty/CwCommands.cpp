@@ -65,7 +65,7 @@ QList<CwLib*> cw_get_libs(const QString &pattern, int patternSyntax) {
     return l;
 }
 
-void write_lib(CwLib *dotlib, const QString &filename) {
+void cw_write_lib(CwLib *dotlib, const QString &filename) {
 	dotlib->write(filename);
 }
 

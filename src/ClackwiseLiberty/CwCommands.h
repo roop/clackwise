@@ -33,7 +33,7 @@ Clackwise::CwLib* cw_clone_lib(Clackwise::CwLib* src, const QString &name);
 Clackwise::CwLibGroup* cw_create_lib_group(Clackwise::CwLibGroup* parent,
                         const QString& type, const QString &name);
 QList<Clackwise::CwLib*> cw_get_libs(const QString &pattern, int patternSyntax);
-void write_lib(Clackwise::CwLib *dotlib, const QString &filename);
+void cw_write_lib(Clackwise::CwLib *dotlib, const QString &filename);
 QString object_to_string(Clackwise::CwLibGroup *libgroup);
 
 }

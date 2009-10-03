@@ -73,4 +73,16 @@ QString object_to_string(CwLibGroup *libgroup) {
     return libgroup->fullName();
 }
 
+QList<QString> cw_all_troves() {
+    return CwTroves::instance()->availableTroveNames();
+}
+
+QString cw_current_trove() {
+    return CwTroves::instance()->currentTroveName();
+}
+
+void cw_set_current_trove(const QString &name) {
+    CwTroves::instance()->setCurrentTroveName(name);
+}
+
 }

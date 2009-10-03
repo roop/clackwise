@@ -74,6 +74,8 @@ CwTroves::~CwTroves() {
 }
 
 void CwTroves::setCurrentTroveName(const QString& name) {
+    if (!m_libTroves.contains(name))
+        setLibTrove(name, new CwLibTrove(name));
     m_currentTroveName = name;
 }
 

@@ -349,6 +349,32 @@ proc get_lib_groups {args} {
 	return {};
 }
 
+set ::clackwise_commands(remove_lib_group) {
+	{Remove a lib group from memory}
+	{lib_group_objects}
+	{
+	}
+}
+proc remove_lib_group {args} {
+	set ::argv0 "remove_lib_group"
+	set summary [lindex $::clackwise_commands($::argv0) 0]
+	set usage [lindex $::clackwise_commands($::argv0) 1]
+	set options [lindex $::clackwise_commands($::argv0) 2]
+	array set params [::cmdline::getoptions args $options "$usage # $summary"]
+	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] > 0} {
+		foreach lg $params(__NON_SWITCH_ARGS__) {
+            foreach parent [CwLibGroup_parents $lg] {
+                if {![CwLibGroup_removeSubgroup $parent $lg]} {
+		            error "Error: $::argv0: Internal error removing lib group"
+                }
+            }
+        }
+	} else {
+        error "Error: $::argv0: lib_group_object required. See -help."
+    }
+	return "";
+}
+
 set ::clackwise_commands(get_lib_cells) {
 	{Get lib cells from memory}
 	{pattern}

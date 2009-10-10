@@ -69,7 +69,7 @@ public:
     void insertSubgroup(int position, CwLibGroup *lg);
     void addSubgroup(CwLibGroup *lg);
     void replaceSubgroup(int position, CwLibGroup *lg);
-    void removeSubgroupAt(int position);
+    bool removeSubgroup(CwLibGroup *lg);
     const CwLibGroup* subgroupAt(int position) const;
     QList<CwLibGroup*> subgroupsByName(const QString &type, const QString &pattern, int patternSyntax) const;
     QList<CwLibGroup*> subgroupsBySequence(const QString &typeSequence, const QString &pattern, int patternSyntax) const;

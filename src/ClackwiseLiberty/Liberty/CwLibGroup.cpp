@@ -212,10 +212,14 @@ void CwLibGroup::replaceSubgroup(int position, CwLibGroup *lg)
     d->m_subgroups[position] = lg;
 }
 
-void CwLibGroup::removeSubgroupAt(int position)
+bool CwLibGroup::removeSubgroup(CwLibGroup *lg)
 {
     copyOnWrite();
+    int position = d->m_subgroups.indexOf(lg);
+    if (position < 0)
+        return false;
     d->m_subgroups.removeAt(position);
+    return true;
 }
 
 void CwLibGroup::clearSubgroups()

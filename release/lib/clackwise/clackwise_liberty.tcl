@@ -691,7 +691,7 @@ proc write_lib {args} {
 	}
 	if {[info exists params(__NON_SWITCH_ARGS__)] && [llength $params(__NON_SWITCH_ARGS__)] == 1} {
 		set object [lindex $params(__NON_SWITCH_ARGS__) 0]
-        if {$object != ""} {
+        if {$object == ""} {
 		    error "Error: $::argv0: Can't write an empty lib object"
         }
 		return [cw_write_lib $object $params(output_file)]
